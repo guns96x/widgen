@@ -5,11 +5,17 @@ import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.widgen.limits.data.api.QuotaApiClient
 import com.widgen.limits.data.model.QuotaSnapshot
+import com.widgen.limits.data.security.ApiTokenStore
+import com.widgen.limits.data.security.PreferencesApiTokenStore
+import com.widgen.limits.data.util.BridgeUrlValidator
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class QuotaRepository private constructor(context: Context) {
+class QuotaRepository internal constructor(
+    context: Context,
+    private val tokenStore: ApiTokenStore = PreferencesApiTokenStore(context)
+) {
 
     private val prefs: SharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
     private val apiClient = QuotaApiClient()
@@ -18,22 +24,32 @@ class QuotaRepository private constructor(context: Context) {
     private val _snapshotFlow = MutableStateFlow<QuotaSnapshot?>(loadCachedSnapshot())
     val snapshotFlow: StateFlow<QuotaSnapshot?> = _snapshotFlow.asStateFlow()
 
+    init {
+        // One-time migration of legacy token if present
+        val legacyToken = prefs.getString(KEY_API_TOKEN, null)
+        if (!legacyToken.isNullOrBlank()) {
+            if (tokenStore.get().isBlank()) {
+                tokenStore.set(legacyToken)
+            }
+            prefs.edit().remove(KEY_API_TOKEN).apply()
+        }
+    }
+
     fun getBridgeUrl(): String {
         return prefs.getString(KEY_BRIDGE_URL, DEFAULT_BRIDGE_URL) ?: DEFAULT_BRIDGE_URL
     }
 
     fun setBridgeUrl(url: String) {
-        val clean = url.trim()
-        prefs.edit().putString(KEY_BRIDGE_URL, clean).apply()
+        val normalized = BridgeUrlValidator.normalize(url).getOrDefault(url.trim())
+        prefs.edit().putString(KEY_BRIDGE_URL, normalized).apply()
     }
 
     fun getApiToken(): String {
-        return prefs.getString(KEY_API_TOKEN, "") ?: ""
+        return tokenStore.get()
     }
 
     fun setApiToken(token: String) {
-        val clean = token.trim()
-        prefs.edit().putString(KEY_API_TOKEN, clean).apply()
+        tokenStore.set(token)
     }
 
     fun getCachedSnapshot(): QuotaSnapshot? {
@@ -64,7 +80,7 @@ class QuotaRepository private constructor(context: Context) {
         }
         val token = getApiToken()
         val result = apiClient.switchAccount(url, token, accountId)
-        if (result.isSuccess) {
+        if (result.getOrNull() == true) {
             refreshQuota()
         }
         return result

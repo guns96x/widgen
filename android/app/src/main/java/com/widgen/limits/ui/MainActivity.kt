@@ -31,16 +31,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
 import com.widgen.limits.data.model.AccountDetail
 import com.widgen.limits.data.model.CodexInfo
 import com.widgen.limits.data.model.ModelQuota
 import com.widgen.limits.data.model.PoolInfo
 import com.widgen.limits.data.model.QuotaSnapshot
 import com.widgen.limits.data.repository.QuotaRepository
+import com.widgen.limits.data.util.BridgeUrlValidator
 import com.widgen.limits.ui.theme.*
-import com.widgen.limits.worker.QuotaSyncWorker
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -53,13 +51,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             AntigravityLimitsTheme {
-                MainScreen(
-                    repository = repository,
-                    onRefreshRequested = {
-                        val request = OneTimeWorkRequestBuilder<QuotaSyncWorker>().build()
-                        WorkManager.getInstance(applicationContext).enqueue(request)
-                    }
-                )
+                MainScreen(repository = repository)
             }
         }
     }
@@ -68,8 +60,7 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
-    repository: QuotaRepository,
-    onRefreshRequested: () -> Unit
+    repository: QuotaRepository
 ) {
     val snapshot by repository.snapshotFlow.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
@@ -340,8 +331,8 @@ fun MainScreen(
 fun CodexHeroCard(codex: CodexInfo) {
     val session = codex.sessionWindow
     val weekly = codex.weeklyWindow
-    val sFrac = ((session?.remainingPercent ?: 100) / 100f).coerceIn(0f, 1f)
-    val wFrac = ((weekly?.remainingPercent ?: 100) / 100f).coerceIn(0f, 1f)
+    val sFrac = session?.let { (it.remainingPercent / 100f).coerceIn(0f, 1f) } ?: 0f
+    val wFrac = weekly?.let { (it.remainingPercent / 100f).coerceIn(0f, 1f) } ?: 0f
 
     Column(
         modifier = Modifier
@@ -395,10 +386,10 @@ fun CodexHeroCard(codex: CodexInfo) {
         ) {
             Text(text = "5-Hour Session Window", fontSize = 13.sp, color = TextSecondary)
             Text(
-                text = "${session?.remainingPercent ?: 100}% left",
+                text = if (session != null) "${session.remainingPercent}% left" else "—",
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Bold,
-                color = StatusGreen
+                color = if (session != null) StatusGreen else TextSecondary
             )
         }
         Spacer(modifier = Modifier.height(6.dp))
@@ -408,12 +399,12 @@ fun CodexHeroCard(codex: CodexInfo) {
                 .fillMaxWidth()
                 .height(6.dp)
                 .clip(RoundedCornerShape(3.dp)),
-            color = StatusGreen,
+            color = if (session != null) StatusGreen else SurfaceElevated,
             trackColor = SurfaceElevated
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
-            text = "Reset in: ${session?.resetFormatted ?: "Ready"}",
+            text = if (session != null) "Reset in: ${session.resetFormatted}" else "Status: Unavailable",
             fontSize = 11.sp,
             color = TextSecondary
         )
@@ -426,9 +417,11 @@ fun CodexHeroCard(codex: CodexInfo) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(text = "Weekly Quota Window", fontSize = 13.sp, color = TextSecondary)
-            val wCol = if ((weekly?.remainingPercent ?: 100) < 20) StatusRose else StatusAmber
+            val wCol = if (weekly != null) {
+                if (weekly.remainingPercent < 20) StatusRose else StatusAmber
+            } else TextSecondary
             Text(
-                text = "${weekly?.remainingPercent ?: 100}% left",
+                text = if (weekly != null) "${weekly.remainingPercent}% left" else "—",
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Bold,
                 color = wCol
@@ -441,7 +434,7 @@ fun CodexHeroCard(codex: CodexInfo) {
                 .fillMaxWidth()
                 .height(6.dp)
                 .clip(RoundedCornerShape(3.dp)),
-            color = if ((weekly?.remainingPercent ?: 100) < 20) StatusRose else StatusAmber,
+            color = if (weekly != null) (if (weekly.remainingPercent < 20) StatusRose else StatusAmber) else SurfaceElevated,
             trackColor = SurfaceElevated
         )
         Spacer(modifier = Modifier.height(4.dp))
@@ -450,7 +443,7 @@ fun CodexHeroCard(codex: CodexInfo) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "Reset in: ${weekly?.resetFormatted ?: "Ready"}",
+                text = if (weekly != null) "Reset in: ${weekly.resetFormatted}" else "Status: Unavailable",
                 fontSize = 11.sp,
                 color = TextSecondary
             )
@@ -829,6 +822,7 @@ fun SettingsDialog(
 ) {
     var urlText by remember { mutableStateOf(currentUrl) }
     var tokenText by remember { mutableStateOf(currentToken) }
+    var validationError by remember { mutableStateOf<String?>(null) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -850,17 +844,31 @@ fun SettingsDialog(
                 )
                 OutlinedTextField(
                     value = urlText,
-                    onValueChange = { urlText = it },
+                    onValueChange = {
+                        urlText = it
+                        validationError = null
+                    },
                     singleLine = true,
+                    isError = validationError != null,
                     placeholder = { Text("http://<PC-LAN-IP>:59123", color = TextSecondary.copy(alpha = 0.5f)) },
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedTextColor = TextPrimary,
                         unfocusedTextColor = TextPrimary,
                         focusedBorderColor = GeminiCyan,
-                        unfocusedBorderColor = BorderDark
+                        unfocusedBorderColor = BorderDark,
+                        errorBorderColor = Color(0xFFEF4444)
                     ),
                     modifier = Modifier.fillMaxWidth()
                 )
+
+                if (validationError != null) {
+                    Text(
+                        text = validationError ?: "",
+                        color = Color(0xFFEF4444),
+                        fontSize = 12.sp,
+                        modifier = Modifier.padding(start = 4.dp)
+                    )
+                }
 
                 Text(
                     text = "API Bearer Token:",
@@ -885,7 +893,18 @@ fun SettingsDialog(
         },
         confirmButton = {
             Button(
-                onClick = { onSave(urlText.trim(), tokenText.trim()) },
+                onClick = {
+                    val normalized = BridgeUrlValidator.normalize(urlText)
+                    normalized.fold(
+                        onSuccess = { cleanUrl ->
+                            validationError = null
+                            onSave(cleanUrl, tokenText.trim())
+                        },
+                        onFailure = { error ->
+                            validationError = error.message ?: "Invalid Bridge URL"
+                        }
+                    )
+                },
                 colors = ButtonDefaults.buttonColors(containerColor = GeminiCyan, contentColor = Color.Black)
             ) {
                 Text("Save & Connect")

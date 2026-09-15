@@ -72,7 +72,11 @@ class QuotaApiClient {
             val request = reqBuilder.build()
 
             client.newCall(request).execute().use { response ->
-                Result.success(response.isSuccessful)
+                if (!response.isSuccessful) {
+                    val msg = response.body?.string()?.takeIf { it.isNotBlank() } ?: response.message
+                    return@withContext Result.failure(IOException("HTTP ${response.code}: $msg"))
+                }
+                Result.success(true)
             }
         } catch (e: Exception) {
             Result.failure(e)
