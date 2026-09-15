@@ -217,6 +217,7 @@ def fetch_codex_usage():
             auth_data = json.load(f)
         tok = auth_data.get("tokens", {})
         access_token = tok.get("access_token")
+        account_id = tok.get("account_id")
         if not access_token:
             return None
         
@@ -224,10 +225,13 @@ def fetch_codex_usage():
         url = "https://chatgpt.com/backend-api/codex/usage"
         headers = {
             "Authorization": f"Bearer {access_token}",
-            "User-Agent": "codex/1.0.0"
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36",
+            "Accept": "application/json"
         }
+        if account_id:
+            headers["ChatGPT-Account-Id"] = account_id
         req = urllib.request.Request(url, headers=headers)
-        with urllib.request.urlopen(req, timeout=4) as resp:
+        with urllib.request.urlopen(req, timeout=5) as resp:
             if resp.status == 200:
                 data = json.loads(resp.read().decode("utf-8"))
                 rate_limit = data.get("rate_limit", {})
