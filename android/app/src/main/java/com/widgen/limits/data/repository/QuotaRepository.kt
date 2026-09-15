@@ -64,7 +64,7 @@ class QuotaRepository private constructor(context: Context) {
         private const val PREFS_NAME = "antigravity_limits_prefs"
         private const val KEY_BRIDGE_URL = "bridge_url"
         private const val KEY_CACHED_SNAPSHOT = "cached_snapshot"
-        const val DEFAULT_BRIDGE_URL = "http://10.0.2.2:59123" // Default for emulator / LAN
+        const val DEFAULT_BRIDGE_URL = "http://100.82.252.86:59123" // PC Tailscale IP
 
         @Volatile
         private var instance: QuotaRepository? = null
