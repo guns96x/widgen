@@ -58,27 +58,29 @@ class AntigravityWidget : GlanceAppWidget() {
     @Composable
     private fun WidgetContent(context: Context, snapshot: QuotaSnapshot?) {
         val activeAccount = snapshot?.account
-        val email = activeAccount?.email?.ifBlank { "Antigravity" } ?: "Antigravity"
+        val email = activeAccount?.email?.ifBlank { "Antigravity" } ?: (if (snapshot?.isOnline == true) "Connected" else "Not connected")
         val isOnline = snapshot?.isOnline == true
 
         val codex = snapshot?.codex
-        val codexSessionPct = codex?.sessionWindow?.remainingPercent ?: 100
-        val codexSessionFrac = codexSessionPct / 100f
-        val codexSessionReset = codex?.sessionWindow?.resetFormatted?.let { "Reset: $it" } ?: "Ready"
+        val codexSession = codex?.sessionWindow
+        val codexSessionPctText = if (codexSession != null) "${codexSession.remainingPercent}%" else "—"
+        val codexSessionFrac = if (codexSession != null) (codexSession.remainingPercent / 100f).coerceIn(0f, 1f) else 0f
+        val codexSessionReset = if (codexSession != null) "Reset: ${codexSession.resetFormatted}" else "Unavailable"
 
-        val codexWeeklyPct = codex?.weeklyWindow?.remainingPercent ?: 100
-        val codexWeeklyFrac = codexWeeklyPct / 100f
-        val codexWeeklyReset = codex?.weeklyWindow?.resetFormatted?.let { "Reset: $it" } ?: "Ready"
+        val codexWeekly = codex?.weeklyWindow
+        val codexWeeklyPctText = if (codexWeekly != null) "${codexWeekly.remainingPercent}%" else "—"
+        val codexWeeklyFrac = if (codexWeekly != null) (codexWeekly.remainingPercent / 100f).coerceIn(0f, 1f) else 0f
+        val codexWeeklyReset = if (codexWeekly != null) "Reset: ${codexWeekly.resetFormatted}" else "Unavailable"
 
         val geminiPool = snapshot?.pools?.gemini
-        val geminiPct = geminiPool?.remainingPercent ?: 100
-        val geminiFrac = (geminiPool?.remainingFraction ?: 1.0f).coerceIn(0f, 1f)
-        val geminiReset = geminiPool?.resetFormatted?.let { "Reset: $it" } ?: "Ready"
+        val geminiPctText = if (geminiPool != null) "${geminiPool.remainingPercent}%" else "—"
+        val geminiFrac = if (geminiPool != null) (geminiPool.remainingFraction).coerceIn(0f, 1f) else 0f
+        val geminiReset = if (geminiPool != null) "Reset: ${geminiPool.resetFormatted}" else "Unavailable"
 
         val claudePool = snapshot?.pools?.claudeGpt
-        val claudePct = claudePool?.remainingPercent ?: 100
-        val claudeFrac = (claudePool?.remainingFraction ?: 1.0f).coerceIn(0f, 1f)
-        val claudeReset = claudePool?.resetFormatted?.let { "Reset: $it" } ?: "Ready"
+        val claudePctText = if (claudePool != null) "${claudePool.remainingPercent}%" else "—"
+        val claudeFrac = if (claudePool != null) (claudePool.remainingFraction).coerceIn(0f, 1f) else 0f
+        val claudeReset = if (claudePool != null) "Reset: ${claudePool.resetFormatted}" else "Unavailable"
 
         // Colors
         val bgCol = Color(0xFF0E1117)
@@ -158,7 +160,7 @@ class AntigravityWidget : GlanceAppWidget() {
                         Text(
                             text = "CODEX",
                             style = TextStyle(
-                                color = ColorProvider(codexGreen),
+                                color = ColorProvider(if (codex != null) codexGreen else textSecondary),
                                 fontSize = 10.sp,
                                 fontWeight = FontWeight.Bold
                             )
@@ -166,10 +168,10 @@ class AntigravityWidget : GlanceAppWidget() {
                         Spacer(modifier = GlanceModifier.height(4.dp))
                         MetricCard(
                             title = "5h Window",
-                            percent = codexSessionPct,
+                            percentText = codexSessionPctText,
                             fraction = codexSessionFrac,
                             resetText = codexSessionReset,
-                            accentColor = codexGreen,
+                            accentColor = if (codexSession != null) codexGreen else textSecondary,
                             surfaceColor = surfaceCol,
                             textPrimary = textPrimary,
                             textSecondary = textSecondary
@@ -177,10 +179,10 @@ class AntigravityWidget : GlanceAppWidget() {
                         Spacer(modifier = GlanceModifier.height(4.dp))
                         MetricCard(
                             title = "Weekly",
-                            percent = codexWeeklyPct,
+                            percentText = codexWeeklyPctText,
                             fraction = codexWeeklyFrac,
                             resetText = codexWeeklyReset,
-                            accentColor = if (codexWeeklyPct < 20) amberCol else codexSky,
+                            accentColor = if (codexWeekly != null && codexWeekly.remainingPercent < 20) amberCol else if (codexWeekly != null) codexSky else textSecondary,
                             surfaceColor = surfaceCol,
                             textPrimary = textPrimary,
                             textSecondary = textSecondary
@@ -196,7 +198,7 @@ class AntigravityWidget : GlanceAppWidget() {
                         Text(
                             text = "ANTIGRAVITY",
                             style = TextStyle(
-                                color = ColorProvider(geminiCyan),
+                                color = ColorProvider(if (geminiPool != null || claudePool != null) geminiCyan else textSecondary),
                                 fontSize = 10.sp,
                                 fontWeight = FontWeight.Bold
                             )
@@ -204,10 +206,10 @@ class AntigravityWidget : GlanceAppWidget() {
                         Spacer(modifier = GlanceModifier.height(4.dp))
                         MetricCard(
                             title = "Gemini",
-                            percent = geminiPct,
+                            percentText = geminiPctText,
                             fraction = geminiFrac,
                             resetText = geminiReset,
-                            accentColor = geminiCyan,
+                            accentColor = if (geminiPool != null) geminiCyan else textSecondary,
                             surfaceColor = surfaceCol,
                             textPrimary = textPrimary,
                             textSecondary = textSecondary
@@ -215,10 +217,10 @@ class AntigravityWidget : GlanceAppWidget() {
                         Spacer(modifier = GlanceModifier.height(4.dp))
                         MetricCard(
                             title = "Claude & GPT",
-                            percent = claudePct,
+                            percentText = claudePctText,
                             fraction = claudeFrac,
                             resetText = claudeReset,
-                            accentColor = claudePurple,
+                            accentColor = if (claudePool != null) claudePurple else textSecondary,
                             surfaceColor = surfaceCol,
                             textPrimary = textPrimary,
                             textSecondary = textSecondary
@@ -232,7 +234,7 @@ class AntigravityWidget : GlanceAppWidget() {
     @Composable
     private fun MetricCard(
         title: String,
-        percent: Int,
+        percentText: String,
         fraction: Float,
         resetText: String,
         accentColor: Color,
@@ -263,7 +265,7 @@ class AntigravityWidget : GlanceAppWidget() {
                         maxLines = 1
                     )
                     Text(
-                        text = "$percent%",
+                        text = percentText,
                         style = TextStyle(
                             color = ColorProvider(accentColor),
                             fontSize = 11.sp,
@@ -298,10 +300,8 @@ class AntigravityWidget : GlanceAppWidget() {
 
 class RefreshWidgetCallback : ActionCallback {
     override suspend fun onAction(context: Context, glanceId: GlanceId, parameters: androidx.glance.action.ActionParameters) {
-        // Enqueue immediate one-time sync worker
+        // Enqueue immediate one-time sync worker, which updates the widget after network fetch completes
         val request = OneTimeWorkRequestBuilder<QuotaSyncWorker>().build()
         WorkManager.getInstance(context).enqueue(request)
-        // Refresh cached UI
-        AntigravityWidget().update(context, glanceId)
     }
 }

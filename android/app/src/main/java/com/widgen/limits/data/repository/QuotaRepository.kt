@@ -27,13 +27,26 @@ class QuotaRepository private constructor(context: Context) {
         prefs.edit().putString(KEY_BRIDGE_URL, clean).apply()
     }
 
+    fun getApiToken(): String {
+        return prefs.getString(KEY_API_TOKEN, "") ?: ""
+    }
+
+    fun setApiToken(token: String) {
+        val clean = token.trim()
+        prefs.edit().putString(KEY_API_TOKEN, clean).apply()
+    }
+
     fun getCachedSnapshot(): QuotaSnapshot? {
         return _snapshotFlow.value
     }
 
     suspend fun refreshQuota(): Result<QuotaSnapshot> {
         val url = getBridgeUrl()
-        val result = apiClient.fetchQuota(url)
+        if (url.isBlank()) {
+            return Result.failure(IllegalStateException("Bridge URL not configured"))
+        }
+        val token = getApiToken()
+        val result = apiClient.fetchQuota(url, token)
         if (result.isSuccess) {
             val snapshot = result.getOrNull()
             if (snapshot != null) {
@@ -46,9 +59,12 @@ class QuotaRepository private constructor(context: Context) {
 
     suspend fun switchAccount(accountId: String): Result<Boolean> {
         val url = getBridgeUrl()
-        val result = apiClient.switchAccount(url, accountId)
+        if (url.isBlank()) {
+            return Result.failure(IllegalStateException("Bridge URL not configured"))
+        }
+        val token = getApiToken()
+        val result = apiClient.switchAccount(url, token, accountId)
         if (result.isSuccess) {
-            // Immediately re-fetch quota snapshot
             refreshQuota()
         }
         return result
@@ -73,8 +89,9 @@ class QuotaRepository private constructor(context: Context) {
     companion object {
         private const val PREFS_NAME = "antigravity_limits_prefs"
         private const val KEY_BRIDGE_URL = "bridge_url"
+        private const val KEY_API_TOKEN = "api_token"
         private const val KEY_CACHED_SNAPSHOT = "cached_snapshot"
-        const val DEFAULT_BRIDGE_URL = "http://100.82.252.86:59123" // PC Tailscale IP
+        const val DEFAULT_BRIDGE_URL = "" // Empty default: user must configure bridge URL
 
         @Volatile
         private var instance: QuotaRepository? = null

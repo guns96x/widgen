@@ -15,6 +15,9 @@ import re
 import glob
 import subprocess
 import threading
+import hmac
+import secrets
+import html
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse
 from datetime import datetime, timezone
@@ -27,12 +30,70 @@ CACHE_TTL_SECONDS = 10
 USER_PROFILE = os.environ.get("USERPROFILE", "C:\\Users\\pavlo")
 ANTIGRAVITY_TOOLS_DIR = os.path.join(USER_PROFILE, ".antigravity_tools")
 CODEX_AUTH_FILE = os.path.join(USER_PROFILE, ".codex", "auth.json")
+WIDGEN_DIR = os.path.join(USER_PROFILE, ".widgen")
+WIDGEN_CONFIG_FILE = os.path.join(WIDGEN_DIR, "config.json")
 
 # Global cache
 _cache_lock = threading.Lock()
 _cached_quota = None
 _last_fetch_time = 0
 _cached_target = None  # (port, csrf_token, use_ssl)
+
+ALLOWED_ORIGINS = {
+    f"http://127.0.0.1:{BRIDGE_PORT}",
+    f"http://localhost:{BRIDGE_PORT}",
+}
+
+
+def get_api_token() -> str:
+    """
+    Retrieves or generates shared bearer token for API security.
+    Priority:
+    1. Env var WIDGEN_API_TOKEN
+    2. Config file ~/.widgen/config.json
+    3. Auto-generate 32-byte hex token and persist to ~/.widgen/config.json
+    """
+    env_tok = os.environ.get("WIDGEN_API_TOKEN")
+    if env_tok and env_tok.strip():
+        return env_tok.strip()
+
+    if os.path.exists(WIDGEN_CONFIG_FILE):
+        try:
+            with open(WIDGEN_CONFIG_FILE, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                tok = data.get("api_token")
+                if tok and str(tok).strip():
+                    return str(tok).strip()
+        except Exception:
+            pass
+
+    # Auto-generate secure token
+    new_token = secrets.token_hex(32)
+    try:
+        os.makedirs(WIDGEN_DIR, exist_ok=True)
+        with open(WIDGEN_CONFIG_FILE, "w", encoding="utf-8") as f:
+            json.dump({"api_token": new_token}, f, indent=2)
+    except Exception as e:
+        print(f"[Bridge] Warning: could not persist api_token: {e}", file=sys.stderr)
+    return new_token
+
+
+def mask_token(tok: str) -> str:
+    if not tok or len(tok) < 8:
+        return "****"
+    return f"{tok[:4]}...{tok[-4:]}"
+
+
+def is_authorized(headers) -> bool:
+    """Constant-time validation of Bearer token."""
+    expected = get_api_token()
+    if not expected:
+        return False
+    auth_header = headers.get("Authorization", "").strip()
+    if not auth_header.startswith("Bearer "):
+        return False
+    received = auth_header[7:].strip()
+    return hmac.compare_digest(received, expected)
 
 
 def get_antigravity_tools_api_key():
@@ -449,9 +510,12 @@ def get_normalized_quota_snapshot():
 
 class WidgenHandler(BaseHTTPRequestHandler):
     def send_cors_headers(self):
-        self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Widgen-Client")
+        origin = self.headers.get("Origin")
+        if origin in ALLOWED_ORIGINS:
+            self.send_header("Access-Control-Allow-Origin", origin)
+            self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+            self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
+            self.send_header("Vary", "Origin")
 
     def do_OPTIONS(self):
         self.send_response(204)
@@ -463,9 +527,18 @@ class WidgenHandler(BaseHTTPRequestHandler):
         path = parsed.path
         
         if path == "/api/accounts/switch":
-            # Protect against cross-origin browser CSRF
+            # API Authorization
+            if not is_authorized(self.headers):
+                self.send_response(401)
+                self.send_header("Content-Type", "application/json")
+                self.send_cors_headers()
+                self.end_headers()
+                self.wfile.write(b'{"error": "unauthorized"}')
+                return
+
+            # CSRF protection: if Origin header present, must match allowlist
             origin = self.headers.get("Origin")
-            if origin and not (origin.startswith("http://127.0.0.1") or origin.startswith("http://localhost")):
+            if origin and origin not in ALLOWED_ORIGINS:
                 self.send_response(403)
                 self.end_headers()
                 self.wfile.write(b'{"error": "Forbidden cross-origin switch request"}')
@@ -506,6 +579,14 @@ class WidgenHandler(BaseHTTPRequestHandler):
         path = parsed.path
         
         if path == "/api/quota":
+            if not is_authorized(self.headers):
+                self.send_response(401)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_cors_headers()
+                self.end_headers()
+                self.wfile.write(b'{"error": "unauthorized"}')
+                return
+
             data = get_normalized_quota_snapshot()
             body = json.dumps(data, indent=2, ensure_ascii=False).encode("utf-8")
             self.send_response(200)
@@ -515,6 +596,14 @@ class WidgenHandler(BaseHTTPRequestHandler):
             self.wfile.write(body)
             
         elif path == "/api/accounts":
+            if not is_authorized(self.headers):
+                self.send_response(401)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_cors_headers()
+                self.end_headers()
+                self.wfile.write(b'{"error": "unauthorized"}')
+                return
+
             data = get_normalized_quota_snapshot()
             accounts = data.get("antigravity", {}).get("accounts", [])
             body = json.dumps({"accounts": accounts}, indent=2, ensure_ascii=False).encode("utf-8")
@@ -525,12 +614,8 @@ class WidgenHandler(BaseHTTPRequestHandler):
             self.wfile.write(body)
             
         elif path == "/api/health":
-            target = resolve_active_server()
-            status = "connected" if target else "searching"
             payload = {
                 "status": "ok",
-                "antigravity": status,
-                "codex": "connected" if os.path.exists(CODEX_AUTH_FILE) else "missing",
                 "timestamp": datetime.now(timezone.utc).isoformat()
             }
             body = json.dumps(payload).encode("utf-8")
@@ -541,6 +626,13 @@ class WidgenHandler(BaseHTTPRequestHandler):
             self.wfile.write(body)
             
         elif path == "/" or path == "/dashboard":
+            client_ip = self.client_address[0]
+            if client_ip not in ("127.0.0.1", "::1", "localhost") and not is_authorized(self.headers):
+                self.send_response(403)
+                self.send_header("Content-Type", "text/plain; charset=utf-8")
+                self.end_headers()
+                self.wfile.write(b"Forbidden: Dashboard is accessible only from localhost.")
+                return
             self.render_dashboard()
         else:
             self.send_response(404)
@@ -551,35 +643,38 @@ class WidgenHandler(BaseHTTPRequestHandler):
         anti = data.get("antigravity", {})
         codex = data.get("codex") or {}
         accounts = anti.get("accounts", [])
+        api_token = get_api_token()
         
         acc_cards_html = ""
         for a in accounts:
             is_cur = a.get("isCurrent")
             bg_card = "#1C212B" if is_cur else "#14171E"
             border_col = "#00E5FF" if is_cur else "#282F3D"
-            btn_html = f'<span style="color:#00E5FF;font-size:12px;font-weight:bold;">● ACTIVE ON PC</span>' if is_cur else f'<button onclick="switchAccount(\'{a.get("id")}\')" style="background:#282F3D;color:#FFF;border:none;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:12px;">Switch to this</button>'
+            safe_email = html.escape(str(a.get('email', '')), quote=True)
+            safe_name = html.escape(str(a.get('name', '')), quote=True)
+            js_acc_id = json.dumps(str(a.get("id", "")))
+            btn_html = f'<span style="color:#00E5FF;font-size:12px;font-weight:bold;">● ACTIVE ON PC</span>' if is_cur else f'<button onclick=\'switchAccount({js_acc_id})\' style="background:#282F3D;color:#FFF;border:none;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:12px;">Switch to this</button>'
             
             acc_cards_html += f"""
             <div style="background:{bg_card};border:1px solid {border_col};border-radius:12px;padding:14px;margin-bottom:10px;">
                 <div style="display:flex;justify-content:space-between;align-items:center;">
                     <div>
-                        <div style="font-weight:600;font-size:14px;">{a.get('email')}</div>
-                        <div style="color:#9CA3AF;font-size:12px;">{a.get('name')}</div>
+                        <div style="font-weight:600;font-size:14px;">{safe_email}</div>
+                        <div style="color:#9CA3AF;font-size:12px;">{safe_name}</div>
                     </div>
                     <div>{btn_html}</div>
                 </div>
                 <div style="display:flex;gap:12px;margin-top:10px;font-size:12px;">
-                    <div>Gemini: <b style="color:#00E5FF;">{a.get('geminiPercent')}%</b> (reset: {a.get('geminiReset')})</div>
-                    <div>Claude: <b style="color:#A855F7;">{a.get('claudePercent')}%</b> (reset: {a.get('claudeReset')})</div>
+                    <div>Gemini: <b style="color:#00E5FF;">{a.get('geminiPercent')}%</b> (reset: {html.escape(str(a.get('geminiReset', 'Ready')))})</div>
+                    <div>Claude: <b style="color:#A855F7;">{a.get('claudePercent')}%</b> (reset: {html.escape(str(a.get('claudeReset', 'Ready')))})</div>
                 </div>
             </div>
             """
             
-        # Codex section
         codex_session = codex.get("sessionWindow", {})
         codex_weekly = codex.get("weeklyWindow", {})
         
-        html = f"""<!DOCTYPE html>
+        dashboard_html = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -614,41 +709,46 @@ class WidgenHandler(BaseHTTPRequestHandler):
                 <b style="color:#10B981;">{codex_session.get('remainingPercent', 100)}% left</b>
             </div>
             <div class="bar-bg"><div class="bar-fill" style="width:{codex_session.get('remainingPercent', 100)}%;background:#10B981;"></div></div>
-            <div style="font-size:12px;color:#9CA3AF;">Reset in: {codex_session.get('resetFormatted', 'Ready')}</div>
+            <div style="font-size:12px;color:#9CA3AF;">Reset in: {html.escape(str(codex_session.get('resetFormatted', 'Ready')))}</div>
 
             <div class="row" style="margin-top:14px;">
                 <span>Codex Weekly Limit</span>
                 <b style="color:{'#EF4444' if codex_weekly.get('remainingPercent', 100) < 20 else '#F59E0B'};">{codex_weekly.get('remainingPercent', 100)}% left</b>
             </div>
             <div class="bar-bg"><div class="bar-fill" style="width:{codex_weekly.get('remainingPercent', 100)}%;background:{'#EF4444' if codex_weekly.get('remainingPercent', 100) < 20 else '#F59E0B'};"></div></div>
-            <div style="font-size:12px;color:#9CA3AF;">Reset in: {codex_weekly.get('resetFormatted', 'Ready')}</div>
+            <div style="font-size:12px;color:#9CA3AF;">Reset in: {html.escape(str(codex_weekly.get('resetFormatted', 'Ready')))}</div>
         </div>
 
         <h2>Google Antigravity Accounts</h2>
         {acc_cards_html}
 
         <div style="background:#14171E;border:1px dashed #282F3D;border-radius:12px;padding:12px;font-size:12px;color:#9CA3AF;margin-top:20px;">
-            API endpoint: <code>http://100.82.252.86:{BRIDGE_PORT}/api/quota</code>
+            API endpoint: <code>http://&lt;PC-LAN-IP&gt;:{BRIDGE_PORT}/api/quota</code><br>
+            Auth: <code>Authorization: Bearer {mask_token(api_token)}</code>
         </div>
     </div>
 
     <script>
+        const API_TOKEN = {json.dumps(api_token)};
         function switchAccount(accId) {{
             fetch('/api/accounts/switch', {{
                 method: 'POST',
-                headers: {{ 'Content-Type': 'application/json' }},
+                headers: {{
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + API_TOKEN
+                }},
                 body: JSON.stringify({{ account_id: accId }})
             }}).then(r => r.json()).then(res => {{
                 if (res.success) location.reload();
                 else alert('Switch failed');
-            }});
+            }}).catch(e => alert('Error: ' + e));
         }}
         setTimeout(() => location.reload(), 30000);
     </script>
 </body>
 </html>
 """
-        body = html.encode("utf-8")
+        body = dashboard_html.encode("utf-8")
         self.send_response(200)
         self.send_header("Content-Type", "text/html; charset=utf-8")
         self.end_headers()
@@ -656,8 +756,10 @@ class WidgenHandler(BaseHTTPRequestHandler):
 
 
 def run_bridge():
+    token = get_api_token()
     print(f"=== Unified AI Limits Bridge (Antigravity Multi-Account + Codex) ===")
     print(f"Starting on http://{BRIDGE_HOST}:{BRIDGE_PORT}...")
+    print(f"[Bridge] API Bearer Token: {mask_token(token)}")
     server = HTTPServer((BRIDGE_HOST, BRIDGE_PORT), WidgenHandler)
     try:
         server.serve_forever()

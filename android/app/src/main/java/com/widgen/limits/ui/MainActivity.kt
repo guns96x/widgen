@@ -130,7 +130,6 @@ fun MainScreen(
                         isRefreshing = true
                         scope.launch {
                             repository.refreshQuota()
-                            onRefreshRequested()
                             isRefreshing = false
                         }
                     }
@@ -154,6 +153,9 @@ fun MainScreen(
             }
         }
     ) { innerPadding ->
+        val bridgeUrl = repository.getBridgeUrl()
+        val isConfigured = bridgeUrl.isNotBlank()
+
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -161,11 +163,41 @@ fun MainScreen(
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            // 0. Setup Banner if not configured
+            if (!isConfigured) {
+                item {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(SurfaceDark)
+                            .border(1.dp, GeminiCyan, RoundedCornerShape(16.dp))
+                            .clickable { showSettingsDialog = true }
+                            .padding(16.dp)
+                    ) {
+                        Text(
+                            text = "⚙️ Configure PC Bridge",
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = GeminiCyan
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "Tap here to enter your PC Bridge URL and API Token from ~/.widgen/config.json",
+                            fontSize = 12.sp,
+                            color = TextSecondary
+                        )
+                    }
+                }
+            }
+
             // 1. OpenAI Codex Section
             item {
                 val codex = snapshot?.codex
                 if (codex != null) {
                     CodexHeroCard(codex = codex)
+                } else {
+                    CodexOfflineCard()
                 }
             }
 
@@ -199,7 +231,6 @@ fun MainScreen(
                         onSwitch = {
                             scope.launch {
                                 repository.switchAccount(acc.id)
-                                onRefreshRequested()
                             }
                         }
                     )
@@ -291,13 +322,14 @@ fun MainScreen(
     if (showSettingsDialog) {
         SettingsDialog(
             currentUrl = repository.getBridgeUrl(),
+            currentToken = repository.getApiToken(),
             onDismiss = { showSettingsDialog = false },
-            onSave = { newUrl ->
+            onSave = { newUrl, newToken ->
                 repository.setBridgeUrl(newUrl)
+                repository.setApiToken(newToken)
                 showSettingsDialog = false
                 scope.launch {
                     repository.refreshQuota()
-                    onRefreshRequested()
                 }
             }
         )
@@ -431,6 +463,59 @@ fun CodexHeroCard(codex: CodexInfo) {
                 )
             }
         }
+    }
+}
+
+@Composable
+fun CodexOfflineCard() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(20.dp))
+            .background(SurfaceDark)
+            .border(1.dp, BorderDark, RoundedCornerShape(20.dp))
+            .padding(18.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier
+                        .size(8.dp)
+                        .clip(CircleShape)
+                        .background(StatusRose)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "OpenAI Codex",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = TextPrimary
+                )
+            }
+            Surface(
+                shape = RoundedCornerShape(6.dp),
+                color = SurfaceElevated,
+                border = androidx.compose.foundation.BorderStroke(1.dp, BorderDark)
+            ) {
+                Text(
+                    text = "OFFLINE",
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = StatusRose,
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = "Codex quota is currently offline or unreachable. Check bridge connection and token.",
+            fontSize = 12.sp,
+            color = TextSecondary
+        )
     }
 }
 
@@ -595,9 +680,11 @@ fun PoolHeroCard(
     accentColor: Color,
     badgeText: String
 ) {
-    val pct = pool?.remainingPercent ?: 100
-    val frac = (pool?.remainingFraction ?: 1.0f).coerceIn(0f, 1f)
-    val resetStr = pool?.resetFormatted ?: "Ready"
+    val isKnown = pool != null
+    val pct = pool?.remainingPercent ?: 0
+    val frac = if (isKnown) (pool?.remainingFraction ?: 1.0f).coerceIn(0f, 1f) else 0f
+    val resetStr = if (isKnown) pool?.resetFormatted ?: "Ready" else "Unavailable"
+    val pctText = if (isKnown) "$pct%" else "—"
 
     Column(
         modifier = Modifier
@@ -649,18 +736,20 @@ fun PoolHeroCard(
             horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             Text(
-                text = "$pct%",
+                text = pctText,
                 fontSize = 36.sp,
                 fontWeight = FontWeight.ExtraBold,
                 letterSpacing = (-1).sp,
-                color = accentColor
+                color = if (isKnown) accentColor else TextSecondary
             )
-            Text(
-                text = "remaining",
-                fontSize = 14.sp,
-                color = TextSecondary,
-                modifier = Modifier.padding(bottom = 6.dp)
-            )
+            if (isKnown) {
+                Text(
+                    text = "remaining",
+                    fontSize = 14.sp,
+                    color = TextSecondary,
+                    modifier = Modifier.padding(bottom = 6.dp)
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(10.dp))
@@ -671,7 +760,7 @@ fun PoolHeroCard(
                 .fillMaxWidth()
                 .height(8.dp)
                 .clip(RoundedCornerShape(4.dp)),
-            color = accentColor,
+            color = if (isKnown) accentColor else SurfaceElevated,
             trackColor = SurfaceElevated
         )
 
@@ -691,7 +780,7 @@ fun PoolHeroCard(
                 text = resetStr,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = TextPrimary
+                color = if (isKnown) TextPrimary else TextSecondary
             )
         }
     }
@@ -734,10 +823,12 @@ fun ModelItemRow(model: ModelQuota) {
 @Composable
 fun SettingsDialog(
     currentUrl: String,
+    currentToken: String,
     onDismiss: () -> Unit,
-    onSave: (String) -> Unit
+    onSave: (url: String, token: String) -> Unit
 ) {
     var urlText by remember { mutableStateOf(currentUrl) }
+    var tokenText by remember { mutableStateOf(currentToken) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -751,9 +842,9 @@ fun SettingsDialog(
             )
         },
         text = {
-            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Text(
-                    text = "PC Tailscale / LAN Bridge IP (e.g. 100.82.252.86:59123):",
+                    text = "PC LAN / Tailscale IP (e.g. http://192.168.1.50:59123):",
                     fontSize = 13.sp,
                     color = TextSecondary
                 )
@@ -761,6 +852,27 @@ fun SettingsDialog(
                     value = urlText,
                     onValueChange = { urlText = it },
                     singleLine = true,
+                    placeholder = { Text("http://<PC-LAN-IP>:59123", color = TextSecondary.copy(alpha = 0.5f)) },
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = TextPrimary,
+                        unfocusedTextColor = TextPrimary,
+                        focusedBorderColor = GeminiCyan,
+                        unfocusedBorderColor = BorderDark
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Text(
+                    text = "API Bearer Token:",
+                    fontSize = 13.sp,
+                    color = TextSecondary
+                )
+                OutlinedTextField(
+                    value = tokenText,
+                    onValueChange = { tokenText = it },
+                    singleLine = true,
+                    visualTransformation = androidx.compose.ui.text.input.PasswordVisualTransformation(),
+                    placeholder = { Text("From ~/.widgen/config.json", color = TextSecondary.copy(alpha = 0.5f)) },
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedTextColor = TextPrimary,
                         unfocusedTextColor = TextPrimary,
@@ -773,7 +885,7 @@ fun SettingsDialog(
         },
         confirmButton = {
             Button(
-                onClick = { onSave(urlText) },
+                onClick = { onSave(urlText.trim(), tokenText.trim()) },
                 colors = ButtonDefaults.buttonColors(containerColor = GeminiCyan, contentColor = Color.Black)
             ) {
                 Text("Save & Connect")

@@ -20,13 +20,22 @@ class QuotaApiClient {
     private val gson = Gson()
     private val jsonMediaType = "application/json; charset=utf-8".toMediaType()
 
-    suspend fun fetchQuota(baseUrl: String): Result<QuotaSnapshot> = withContext(Dispatchers.IO) {
+    suspend fun fetchQuota(baseUrl: String, apiToken: String = ""): Result<QuotaSnapshot> = withContext(Dispatchers.IO) {
         try {
-            val url = if (baseUrl.endsWith("/api/quota")) baseUrl else "${baseUrl.trimEnd('/')}/api/quota"
-            val request = Request.Builder()
+            val cleanUrl = baseUrl.trim()
+            if (cleanUrl.isBlank()) {
+                return@withContext Result.failure(IOException("Bridge URL is not configured"))
+            }
+            val url = if (cleanUrl.endsWith("/api/quota")) cleanUrl else "${cleanUrl.trimEnd('/')}/api/quota"
+            val reqBuilder = Request.Builder()
                 .url(url)
                 .get()
-                .build()
+
+            if (apiToken.isNotBlank()) {
+                reqBuilder.header("Authorization", "Bearer ${apiToken.trim()}")
+            }
+
+            val request = reqBuilder.build()
 
             client.newCall(request).execute().use { response ->
                 if (!response.isSuccessful) {
@@ -41,17 +50,26 @@ class QuotaApiClient {
         }
     }
 
-    suspend fun switchAccount(baseUrl: String, accountId: String): Result<Boolean> = withContext(Dispatchers.IO) {
+    suspend fun switchAccount(baseUrl: String, apiToken: String = "", accountId: String): Result<Boolean> = withContext(Dispatchers.IO) {
         try {
-            val rootUrl = baseUrl.replace("/api/quota", "").trimEnd('/')
+            val cleanUrl = baseUrl.trim()
+            if (cleanUrl.isBlank()) {
+                return@withContext Result.failure(IOException("Bridge URL is not configured"))
+            }
+            val rootUrl = cleanUrl.replace("/api/quota", "").trimEnd('/')
             val url = "$rootUrl/api/accounts/switch"
             val payload = gson.toJson(mapOf("account_id" to accountId))
             val body = payload.toRequestBody(jsonMediaType)
 
-            val request = Request.Builder()
+            val reqBuilder = Request.Builder()
                 .url(url)
                 .post(body)
-                .build()
+
+            if (apiToken.isNotBlank()) {
+                reqBuilder.header("Authorization", "Bearer ${apiToken.trim()}")
+            }
+
+            val request = reqBuilder.build()
 
             client.newCall(request).execute().use { response ->
                 Result.success(response.isSuccessful)
