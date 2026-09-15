@@ -150,7 +150,7 @@ def switch_antigravity_account(account_id):
         "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json"
     }
-    payload = json.dumps({"account_id": account_id}).encode("utf-8")
+    payload = json.dumps({"accountId": account_id, "account_id": account_id}).encode("utf-8")
     
     import urllib.request
     req = urllib.request.Request(url, data=payload, headers=headers, method="POST")

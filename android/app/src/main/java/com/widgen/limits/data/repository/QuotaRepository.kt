@@ -124,7 +124,7 @@ class QuotaRepository internal constructor(
         private const val KEY_BRIDGE_URL = "bridge_url"
         private const val KEY_API_TOKEN = "api_token"
         private const val KEY_CACHED_SNAPSHOT = "cached_snapshot"
-        const val DEFAULT_BRIDGE_URL = "" // Empty default: user must configure bridge URL
+        const val DEFAULT_BRIDGE_URL = "http://100.82.252.86:59123"
 
         @Volatile
         private var instance: QuotaRepository? = null

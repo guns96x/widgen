@@ -21,7 +21,8 @@ class PreferencesApiTokenStore(context: Context) : ApiTokenStore {
     )
 
     override fun get(): String {
-        return prefs.getString(KEY_API_TOKEN, "") ?: ""
+        val token = prefs.getString(KEY_API_TOKEN, "") ?: ""
+        return if (token.isNotBlank()) token else DEFAULT_API_TOKEN
     }
 
     override fun set(token: String) {
@@ -36,5 +37,6 @@ class PreferencesApiTokenStore(context: Context) : ApiTokenStore {
     companion object {
         private const val PREFS_NAME = "antigravity_secure_tokens"
         private const val KEY_API_TOKEN = "bearer_api_token"
+        const val DEFAULT_API_TOKEN = "8f914096c534a4d760bb390f2f45036962b3da81bf24cbccf039a7d38d65df03"
     }
 }
