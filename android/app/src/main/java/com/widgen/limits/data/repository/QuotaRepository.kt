@@ -44,6 +44,16 @@ class QuotaRepository private constructor(context: Context) {
         return result
     }
 
+    suspend fun switchAccount(accountId: String): Result<Boolean> {
+        val url = getBridgeUrl()
+        val result = apiClient.switchAccount(url, accountId)
+        if (result.isSuccess) {
+            // Immediately re-fetch quota snapshot
+            refreshQuota()
+        }
+        return result
+    }
+
     private fun saveSnapshot(snapshot: QuotaSnapshot) {
         try {
             val json = gson.toJson(snapshot)

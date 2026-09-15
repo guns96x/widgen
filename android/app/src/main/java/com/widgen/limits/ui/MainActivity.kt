@@ -15,10 +15,12 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -31,6 +33,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import com.widgen.limits.data.model.AccountDetail
+import com.widgen.limits.data.model.CodexInfo
 import com.widgen.limits.data.model.ModelQuota
 import com.widgen.limits.data.model.PoolInfo
 import com.widgen.limits.data.model.QuotaSnapshot
@@ -86,24 +90,23 @@ fun MainScreen(
                 title = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            text = "Antigravity Limits",
+                            text = "AI Limits",
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        val plan = snapshot?.account?.plan ?: "PRO"
                         Surface(
                             shape = RoundedCornerShape(6.dp),
                             color = SurfaceElevated,
                             border = androidx.compose.foundation.BorderStroke(1.dp, BorderDark)
                         ) {
                             Text(
-                                text = plan.uppercase(),
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.SemiBold,
+                                text = "MULTI-ACCOUNT",
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Bold,
                                 color = GeminiCyan,
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
                             )
                         }
                     }
@@ -158,36 +161,80 @@ fun MainScreen(
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Account & Status Banner
+            // 1. OpenAI Codex Section
             item {
-                AccountBannerCard(snapshot = snapshot, repository = repository)
+                val codex = snapshot?.codex
+                if (codex != null) {
+                    CodexHeroCard(codex = codex)
+                }
             }
 
-            // Pool Card: Gemini Flash & Pro
+            // 2. Antigravity Accounts Header
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Antigravity Accounts",
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = TextPrimary
+                    )
+                    Text(
+                        text = "Tap to switch on PC",
+                        fontSize = 12.sp,
+                        color = TextSecondary
+                    )
+                }
+            }
+
+            // Antigravity Accounts List
+            val accounts = snapshot?.antigravity?.accounts.orEmpty()
+            if (accounts.isNotEmpty()) {
+                items(accounts) { acc ->
+                    AccountSwitchCard(
+                        account = acc,
+                        onSwitch = {
+                            scope.launch {
+                                repository.switchAccount(acc.id)
+                                onRefreshRequested()
+                            }
+                        }
+                    )
+                }
+            } else {
+                item {
+                    // Fallback to single account card if multi-account list empty
+                    AccountBannerCard(snapshot = snapshot, repository = repository)
+                }
+            }
+
+            // 3. Active Account Live Quota Pools
             item {
                 val geminiPool = snapshot?.pools?.gemini
                 PoolHeroCard(
                     title = "Gemini Models",
-                    subtitle = "3.8 Flash · 3.7 Flash · 3.1 Pro",
+                    subtitle = "Active account session",
                     pool = geminiPool,
                     accentColor = GeminiCyan,
                     badgeText = "Rolling Session"
                 )
             }
 
-            // Pool Card: Claude & GPT
             item {
                 val claudePool = snapshot?.pools?.claudeGpt
                 PoolHeroCard(
                     title = "Claude & GPT Models",
-                    subtitle = "Sonnet 4.6 · Opus 4.6 · GPT-OSS",
+                    subtitle = "Active account weekly",
                     pool = claudePool,
                     accentColor = ClaudePurple,
                     badgeText = "Weekly Quota"
                 )
             }
 
-            // Expandable List of Individual Models
+            // 4. Expandable Individual Models Breakdown
             item {
                 val allModels = (snapshot?.pools?.gemini?.models.orEmpty()) +
                                 (snapshot?.pools?.claudeGpt?.models.orEmpty())
@@ -209,7 +256,7 @@ fun MainScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "Individual Models Breakdown (${allModels.size})",
+                                text = "Models Breakdown (${allModels.size})",
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.SemiBold,
                                 color = TextPrimary
@@ -235,7 +282,6 @@ fun MainScreen(
                 }
             }
 
-            // Bottom Spacing for FAB
             item {
                 Spacer(modifier = Modifier.height(72.dp))
             }
@@ -255,6 +301,241 @@ fun MainScreen(
                 }
             }
         )
+    }
+}
+
+@Composable
+fun CodexHeroCard(codex: CodexInfo) {
+    val session = codex.sessionWindow
+    val weekly = codex.weeklyWindow
+    val sFrac = ((session?.remainingPercent ?: 100) / 100f).coerceIn(0f, 1f)
+    val wFrac = ((weekly?.remainingPercent ?: 100) / 100f).coerceIn(0f, 1f)
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(20.dp))
+            .background(SurfaceDark)
+            .border(1.dp, BorderDark, RoundedCornerShape(20.dp))
+            .padding(18.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier
+                        .size(8.dp)
+                        .clip(CircleShape)
+                        .background(StatusGreen)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "OpenAI Codex",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = TextPrimary
+                )
+            }
+            Surface(
+                shape = RoundedCornerShape(6.dp),
+                color = SurfaceElevated,
+                border = androidx.compose.foundation.BorderStroke(1.dp, BorderDark)
+            ) {
+                Text(
+                    text = "${codex.plan.uppercase()} · ${codex.email}",
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = TextSecondary,
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(14.dp))
+
+        // Session Window (5-hour)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(text = "5-Hour Session Window", fontSize = 13.sp, color = TextSecondary)
+            Text(
+                text = "${session?.remainingPercent ?: 100}% left",
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Bold,
+                color = StatusGreen
+            )
+        }
+        Spacer(modifier = Modifier.height(6.dp))
+        LinearProgressIndicator(
+            progress = { sFrac },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(6.dp)
+                .clip(RoundedCornerShape(3.dp)),
+            color = StatusGreen,
+            trackColor = SurfaceElevated
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = "Reset in: ${session?.resetFormatted ?: "Ready"}",
+            fontSize = 11.sp,
+            color = TextSecondary
+        )
+
+        Spacer(modifier = Modifier.height(14.dp))
+
+        // Weekly Window
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(text = "Weekly Quota Window", fontSize = 13.sp, color = TextSecondary)
+            val wCol = if ((weekly?.remainingPercent ?: 100) < 20) StatusRose else StatusAmber
+            Text(
+                text = "${weekly?.remainingPercent ?: 100}% left",
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Bold,
+                color = wCol
+            )
+        }
+        Spacer(modifier = Modifier.height(6.dp))
+        LinearProgressIndicator(
+            progress = { wFrac },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(6.dp)
+                .clip(RoundedCornerShape(3.dp)),
+            color = if ((weekly?.remainingPercent ?: 100) < 20) StatusRose else StatusAmber,
+            trackColor = SurfaceElevated
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = "Reset in: ${weekly?.resetFormatted ?: "Ready"}",
+                fontSize = 11.sp,
+                color = TextSecondary
+            )
+            if (codex.resetCredits > 0) {
+                Text(
+                    text = "${codex.resetCredits} reset credit available",
+                    fontSize = 11.sp,
+                    color = GeminiCyan,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun AccountSwitchCard(
+    account: AccountDetail,
+    onSwitch: () -> Unit
+) {
+    val isCur = account.isCurrent
+    val borderCol = if (isCur) GeminiCyan else BorderDark
+    val bgCol = if (isCur) SurfaceElevated else SurfaceDark
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(bgCol)
+            .border(if (isCur) 1.5.dp else 1.dp, borderCol, RoundedCornerShape(16.dp))
+            .padding(14.dp)
+            .clickable(enabled = !isCur) { onSwitch() }
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = account.email,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = TextPrimary
+                    )
+                }
+                Text(
+                    text = account.name,
+                    fontSize = 12.sp,
+                    color = TextSecondary
+                )
+            }
+
+            if (isCur) {
+                Surface(
+                    shape = RoundedCornerShape(6.dp),
+                    color = GeminiCyan.copy(alpha = 0.15f)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.CheckCircle,
+                            contentDescription = "Active",
+                            tint = GeminiCyan,
+                            modifier = Modifier.size(14.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "ACTIVE ON PC",
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = GeminiCyan
+                        )
+                    }
+                }
+            } else {
+                FilledTonalButton(
+                    onClick = onSwitch,
+                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
+                    colors = ButtonDefaults.filledTonalButtonColors(
+                        containerColor = SurfaceElevated,
+                        contentColor = TextPrimary
+                    )
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.SwapHoriz,
+                        contentDescription = "Switch",
+                        modifier = Modifier.size(14.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(text = "Switch", fontSize = 12.sp)
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Text(
+                text = "Gemini: ${account.geminiPercent}% (${account.geminiReset})",
+                fontSize = 12.sp,
+                color = GeminiCyan,
+                fontWeight = FontWeight.Medium
+            )
+            Text(
+                text = "Claude: ${account.claudePercent}% (${account.claudeReset})",
+                fontSize = 12.sp,
+                color = ClaudePurple,
+                fontWeight = FontWeight.Medium
+            )
+        }
     }
 }
 
@@ -301,19 +582,6 @@ fun AccountBannerCard(snapshot: QuotaSnapshot?, repository: QuotaRepository) {
                 fontSize = 12.sp,
                 color = TextSecondary,
                 maxLines = 1
-            )
-        }
-
-        Surface(
-            shape = RoundedCornerShape(8.dp),
-            color = if (isOnline) StatusGreen.copy(alpha = 0.15f) else StatusRose.copy(alpha = 0.15f)
-        ) {
-            Text(
-                text = if (isOnline) "SYNCED" else "OFFLINE",
-                fontSize = 11.sp,
-                fontWeight = FontWeight.Bold,
-                color = if (isOnline) StatusGreen else StatusRose,
-                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
             )
         }
     }
@@ -374,16 +642,15 @@ fun PoolHeroCard(
             }
         }
 
-        Spacer(modifier = Modifier.height(18.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-        // Large balance number
         Row(
             verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             Text(
                 text = "$pct%",
-                fontSize = 38.sp,
+                fontSize = 36.sp,
                 fontWeight = FontWeight.ExtraBold,
                 letterSpacing = (-1).sp,
                 color = accentColor
@@ -396,7 +663,7 @@ fun PoolHeroCard(
             )
         }
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
         LinearProgressIndicator(
             progress = { frac },
@@ -408,7 +675,7 @@ fun PoolHeroCard(
             trackColor = SurfaceElevated
         )
 
-        Spacer(modifier = Modifier.height(14.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -486,7 +753,7 @@ fun SettingsDialog(
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 Text(
-                    text = "Enter the IP address of your PC running the Widgen Bridge (e.g. 192.168.1.100:59123 or Tailscale IP):",
+                    text = "PC Tailscale / LAN Bridge IP (e.g. 100.82.252.86:59123):",
                     fontSize = 13.sp,
                     color = TextSecondary
                 )

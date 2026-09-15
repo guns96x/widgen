@@ -57,20 +57,38 @@ class AntigravityWidget : GlanceAppWidget() {
 
     @Composable
     private fun WidgetContent(context: Context, snapshot: QuotaSnapshot?) {
-        val account = snapshot?.account
-        val email = account?.email?.ifBlank { "Antigravity" } ?: "Antigravity"
+        val activeAccount = snapshot?.account
+        val email = activeAccount?.email?.ifBlank { "Antigravity" } ?: "Antigravity"
         val isOnline = snapshot?.isOnline == true
 
+        val codex = snapshot?.codex
+        val codexSessionPct = codex?.sessionWindow?.remainingPercent ?: 100
+        val codexSessionFrac = codexSessionPct / 100f
+        val codexSessionReset = codex?.sessionWindow?.resetFormatted?.let { "Reset: $it" } ?: "Ready"
+
+        val codexWeeklyPct = codex?.weeklyWindow?.remainingPercent ?: 100
+        val codexWeeklyFrac = codexWeeklyPct / 100f
+        val codexWeeklyReset = codex?.weeklyWindow?.resetFormatted?.let { "Reset: $it" } ?: "Ready"
+
         val geminiPool = snapshot?.pools?.gemini
+        val geminiPct = geminiPool?.remainingPercent ?: 100
+        val geminiFrac = (geminiPool?.remainingFraction ?: 1.0f).coerceIn(0f, 1f)
+        val geminiReset = geminiPool?.resetFormatted?.let { "Reset: $it" } ?: "Ready"
+
         val claudePool = snapshot?.pools?.claudeGpt
+        val claudePct = claudePool?.remainingPercent ?: 100
+        val claudeFrac = (claudePool?.remainingFraction ?: 1.0f).coerceIn(0f, 1f)
+        val claudeReset = claudePool?.resetFormatted?.let { "Reset: $it" } ?: "Ready"
 
         // Colors
         val bgCol = Color(0xFF0E1117)
         val surfaceCol = Color(0xFF161B22)
         val textPrimary = Color(0xFFF0F6FC)
         val textSecondary = Color(0xFF8B949E)
-        val cyanCol = Color(0xFF00E5FF)
-        val purpleCol = Color(0xFFA855F7)
+        val codexGreen = Color(0xFF10B981)
+        val codexSky = Color(0xFF38BDF8)
+        val geminiCyan = Color(0xFF00E5FF)
+        val claudePurple = Color(0xFFA855F7)
         val greenCol = Color(0xFF10B981)
         val amberCol = Color(0xFFF59E0B)
 
@@ -79,7 +97,7 @@ class AntigravityWidget : GlanceAppWidget() {
                 .fillMaxSize()
                 .background(bgCol)
                 .cornerRadius(18.dp)
-                .padding(12.dp)
+                .padding(10.dp)
                 .clickable(actionStartActivity<MainActivity>())
         ) {
             Column(modifier = GlanceModifier.fillMaxSize()) {
@@ -90,17 +108,25 @@ class AntigravityWidget : GlanceAppWidget() {
                 ) {
                     Box(
                         modifier = GlanceModifier
-                            .size(8.dp)
+                            .size(7.dp)
                             .cornerRadius(4.dp)
                             .background(if (isOnline) greenCol else amberCol)
                     ) {}
                     Spacer(modifier = GlanceModifier.width(6.dp))
                     Text(
-                        text = email,
+                        text = "AI Limits",
                         style = TextStyle(
                             color = ColorProvider(textPrimary),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold
+                        )
+                    )
+                    Spacer(modifier = GlanceModifier.width(6.dp))
+                    Text(
+                        text = email,
+                        style = TextStyle(
+                            color = ColorProvider(textSecondary),
+                            fontSize = 10.sp
                         ),
                         maxLines = 1,
                         modifier = GlanceModifier.defaultWeight()
@@ -108,7 +134,7 @@ class AntigravityWidget : GlanceAppWidget() {
                     Text(
                         text = "↻",
                         style = TextStyle(
-                            color = ColorProvider(cyanCol),
+                            color = ColorProvider(geminiCyan),
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold
                         ),
@@ -118,45 +144,84 @@ class AntigravityWidget : GlanceAppWidget() {
                     )
                 }
 
-                Spacer(modifier = GlanceModifier.height(8.dp))
-
-                // Gemini Pool Card
-                PoolRow(
-                    title = "Gemini (Flash/Pro)",
-                    pool = geminiPool,
-                    accentColor = cyanCol,
-                    surfaceColor = surfaceCol,
-                    textPrimary = textPrimary,
-                    textSecondary = textSecondary
-                )
-
                 Spacer(modifier = GlanceModifier.height(6.dp))
 
-                // Claude / GPT Pool Card
-                PoolRow(
-                    title = "Claude & GPT",
-                    pool = claudePool,
-                    accentColor = purpleCol,
-                    surfaceColor = surfaceCol,
-                    textPrimary = textPrimary,
-                    textSecondary = textSecondary
-                )
-
-                Spacer(modifier = GlanceModifier.defaultWeight())
-
-                // Footer with credits info
-                if (account != null) {
-                    Row(
-                        modifier = GlanceModifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
+                // Unified Quotas: 2-Column Side-by-Side (Codex & Antigravity)
+                Row(
+                    modifier = GlanceModifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.Top
+                ) {
+                    // Left Column: OpenAI Codex
+                    Column(
+                        modifier = GlanceModifier.defaultWeight()
                     ) {
                         Text(
-                            text = "Credits: ${account.promptCredits} prompt · ${account.flowCredits} flow",
+                            text = "CODEX",
                             style = TextStyle(
-                                color = ColorProvider(textSecondary),
-                                fontSize = 10.sp
-                            ),
-                            maxLines = 1
+                                color = ColorProvider(codexGreen),
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        )
+                        Spacer(modifier = GlanceModifier.height(4.dp))
+                        MetricCard(
+                            title = "5h Window",
+                            percent = codexSessionPct,
+                            fraction = codexSessionFrac,
+                            resetText = codexSessionReset,
+                            accentColor = codexGreen,
+                            surfaceColor = surfaceCol,
+                            textPrimary = textPrimary,
+                            textSecondary = textSecondary
+                        )
+                        Spacer(modifier = GlanceModifier.height(4.dp))
+                        MetricCard(
+                            title = "Weekly",
+                            percent = codexWeeklyPct,
+                            fraction = codexWeeklyFrac,
+                            resetText = codexWeeklyReset,
+                            accentColor = if (codexWeeklyPct < 20) amberCol else codexSky,
+                            surfaceColor = surfaceCol,
+                            textPrimary = textPrimary,
+                            textSecondary = textSecondary
+                        )
+                    }
+
+                    Spacer(modifier = GlanceModifier.width(8.dp))
+
+                    // Right Column: Antigravity
+                    Column(
+                        modifier = GlanceModifier.defaultWeight()
+                    ) {
+                        Text(
+                            text = "ANTIGRAVITY",
+                            style = TextStyle(
+                                color = ColorProvider(geminiCyan),
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        )
+                        Spacer(modifier = GlanceModifier.height(4.dp))
+                        MetricCard(
+                            title = "Gemini",
+                            percent = geminiPct,
+                            fraction = geminiFrac,
+                            resetText = geminiReset,
+                            accentColor = geminiCyan,
+                            surfaceColor = surfaceCol,
+                            textPrimary = textPrimary,
+                            textSecondary = textSecondary
+                        )
+                        Spacer(modifier = GlanceModifier.height(4.dp))
+                        MetricCard(
+                            title = "Claude & GPT",
+                            percent = claudePct,
+                            fraction = claudeFrac,
+                            resetText = claudeReset,
+                            accentColor = claudePurple,
+                            surfaceColor = surfaceCol,
+                            textPrimary = textPrimary,
+                            textSecondary = textSecondary
                         )
                     }
                 }
@@ -165,24 +230,22 @@ class AntigravityWidget : GlanceAppWidget() {
     }
 
     @Composable
-    private fun PoolRow(
+    private fun MetricCard(
         title: String,
-        pool: PoolInfo?,
+        percent: Int,
+        fraction: Float,
+        resetText: String,
         accentColor: Color,
         surfaceColor: Color,
         textPrimary: Color,
         textSecondary: Color
     ) {
-        val pct = pool?.remainingPercent ?: 100
-        val frac = (pool?.remainingFraction ?: 1.0f).coerceIn(0f, 1f)
-        val resetStr = pool?.resetFormatted ?: "Ready"
-
         Box(
             modifier = GlanceModifier
                 .fillMaxWidth()
                 .background(surfaceColor)
-                .cornerRadius(10.dp)
-                .padding(horizontal = 8.dp, vertical = 6.dp)
+                .cornerRadius(8.dp)
+                .padding(horizontal = 7.dp, vertical = 5.dp)
         ) {
             Column(modifier = GlanceModifier.fillMaxWidth()) {
                 Row(
@@ -193,41 +256,41 @@ class AntigravityWidget : GlanceAppWidget() {
                         text = title,
                         style = TextStyle(
                             color = ColorProvider(textSecondary),
-                            fontSize = 11.sp,
+                            fontSize = 9.sp,
                             fontWeight = FontWeight.Medium
                         ),
-                        modifier = GlanceModifier.defaultWeight()
+                        modifier = GlanceModifier.defaultWeight(),
+                        maxLines = 1
                     )
                     Text(
-                        text = "$pct%",
+                        text = "$percent%",
                         style = TextStyle(
                             color = ColorProvider(accentColor),
-                            fontSize = 13.sp,
+                            fontSize = 11.sp,
                             fontWeight = FontWeight.Bold
                         )
                     )
                 }
 
-                Spacer(modifier = GlanceModifier.height(4.dp))
-
-                LinearProgressIndicator(
-                    progress = frac,
-                    modifier = GlanceModifier.fillMaxWidth().height(4.dp),
-                    color = ColorProvider(accentColor),
-                    backgroundColor = ColorProvider(Color(0xFF282F3D))
-                )
-
                 Spacer(modifier = GlanceModifier.height(3.dp))
 
-                Row(modifier = GlanceModifier.fillMaxWidth()) {
-                    Text(
-                        text = "Reset in: $resetStr",
-                        style = TextStyle(
-                            color = ColorProvider(textSecondary),
-                            fontSize = 9.sp
-                        )
-                    )
-                }
+                LinearProgressIndicator(
+                    progress = fraction,
+                    modifier = GlanceModifier.fillMaxWidth().height(3.dp),
+                    color = ColorProvider(accentColor),
+                    backgroundColor = ColorProvider(Color(0xFF21262D))
+                )
+
+                Spacer(modifier = GlanceModifier.height(2.dp))
+
+                Text(
+                    text = resetText,
+                    style = TextStyle(
+                        color = ColorProvider(textSecondary),
+                        fontSize = 8.sp
+                    ),
+                    maxLines = 1
+                )
             }
         }
     }

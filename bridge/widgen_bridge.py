@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """
-Widgen Bridge - Antigravity Quota Monitor & Relay Server
-Detects local Antigravity Language Server, extracts CSRF token and listening port,
-fetches live quotas, and exposes a clean REST API and mobile-ready Web UI.
+Widgen Bridge - Unified AI Limits Monitor & Multi-Account Switcher
+Monitors both Google Antigravity (multi-account via Antigravity Tools & LanguageServer)
+and OpenAI Codex (via ~/.codex/auth.json), providing live quotas, PC account switching,
+and standalone REST endpoints for Android widgets.
 """
 
 import os
@@ -11,6 +12,7 @@ import json
 import time
 import ssl
 import re
+import glob
 import subprocess
 import threading
 from http.server import HTTPServer, BaseHTTPRequestHandler
@@ -19,13 +21,74 @@ from datetime import datetime, timezone
 
 BRIDGE_PORT = int(os.environ.get("WIDGEN_BRIDGE_PORT", "59123"))
 BRIDGE_HOST = os.environ.get("WIDGEN_BRIDGE_HOST", "0.0.0.0")
-CACHE_TTL_SECONDS = 15
+CACHE_TTL_SECONDS = 10
+
+# Paths
+USER_PROFILE = os.environ.get("USERPROFILE", "C:\\Users\\pavlo")
+ANTIGRAVITY_TOOLS_DIR = os.path.join(USER_PROFILE, ".antigravity_tools")
+CODEX_AUTH_FILE = os.path.join(USER_PROFILE, ".codex", "auth.json")
 
 # Global cache
 _cache_lock = threading.Lock()
 _cached_quota = None
 _last_fetch_time = 0
 _cached_target = None  # (port, csrf_token, use_ssl)
+
+
+def get_antigravity_tools_api_key():
+    """Reads Antigravity Tools proxy API key from gui_config.json."""
+    cfg_file = os.path.join(ANTIGRAVITY_TOOLS_DIR, "gui_config.json")
+    if os.path.exists(cfg_file):
+        try:
+            with open(cfg_file, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            return data.get("proxy", {}).get("api_key")
+        except Exception:
+            pass
+    return None
+
+
+def fetch_antigravity_tools_accounts():
+    """Fetches all registered Antigravity accounts from local Antigravity Tools on port 8045."""
+    api_key = get_antigravity_tools_api_key()
+    if not api_key:
+        return None
+    url = "http://127.0.0.1:8045/api/accounts"
+    headers = {"Authorization": f"Bearer {api_key}"}
+    
+    import urllib.request
+    req = urllib.request.Request(url, headers=headers)
+    try:
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            if resp.status == 200:
+                data = json.loads(resp.read().decode("utf-8"))
+                return data.get("accounts", [])
+    except Exception as e:
+        print(f"[Bridge] Could not query Antigravity Tools on 8045: {e}", file=sys.stderr)
+    return None
+
+
+def switch_antigravity_account(account_id):
+    """Switches active Antigravity account in Antigravity Tools."""
+    api_key = get_antigravity_tools_api_key()
+    if not api_key:
+        return False
+    url = "http://127.0.0.1:8045/api/accounts/switch"
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    }
+    payload = json.dumps({"account_id": account_id}).encode("utf-8")
+    
+    import urllib.request
+    req = urllib.request.Request(url, data=payload, headers=headers, method="POST")
+    try:
+        # Antigravity Tools restarts the IDE process when switching, so allow up to 25 seconds
+        with urllib.request.urlopen(req, timeout=25) as resp:
+            return resp.status == 200
+    except Exception as e:
+        print(f"[Bridge] Switch account error: {e}", file=sys.stderr)
+        return False
 
 
 def get_process_info_windows():
@@ -42,21 +105,15 @@ def get_process_info_windows():
             return None
         
         data = json.loads(res.stdout)
-        if isinstance(data, list):
-            item = data[0]
-        else:
-            item = data
-        
+        item = data[0] if isinstance(data, list) else data
         pid = item.get("ProcessId")
         cmd_line = item.get("CommandLine", "")
         if not pid or not cmd_line:
             return None
         
-        # Extract CSRF token
         csrf_match = re.search(r"--csrf_token\s+([a-zA-Z0-9\-]+)", cmd_line)
         csrf_token = csrf_match.group(1) if csrf_match else None
         
-        # Find listening TCP ports for this PID
         net_cmd = [
             "powershell", "-NoProfile", "-Command",
             f"Get-NetTCPConnection | Where-Object {{ $_.OwningProcess -eq {pid} -and $_.State -eq 'Listen' }} | "
@@ -71,33 +128,24 @@ def get_process_info_windows():
             elif isinstance(net_data, dict) and net_data.get("LocalPort"):
                 ports = [int(net_data.get("LocalPort"))]
         
-        return {
-            "pid": pid,
-            "csrf_token": csrf_token,
-            "ports": ports
-        }
-    except Exception as e:
-        print(f"[Bridge] Error finding language_server: {e}", file=sys.stderr)
+        return {"pid": pid, "csrf_token": csrf_token, "ports": ports}
+    except Exception:
         return None
 
 
 def fetch_from_language_server(port, csrf_token, use_ssl=False):
-    """Sends GetUserStatus request to local language server."""
     scheme = "https" if use_ssl else "http"
     url = f"{scheme}://127.0.0.1:{port}/exa.language_server_pb.LanguageServerService/GetUserStatus"
-    
     headers = {
         "Content-Type": "application/json",
         "Connect-Protocol-Version": "1",
         "X-Codeium-Csrf-Token": csrf_token
     }
-    
     import urllib.request
     req = urllib.request.Request(url, data=b"{}", headers=headers, method="POST")
     ctx = ssl.create_default_context()
     ctx.check_hostname = False
     ctx.verify_mode = ssl.CERT_NONE
-    
     with urllib.request.urlopen(req, context=ctx if use_ssl else None, timeout=3) as resp:
         if resp.status == 200:
             return json.loads(resp.read().decode("utf-8"))
@@ -105,7 +153,6 @@ def fetch_from_language_server(port, csrf_token, use_ssl=False):
 
 
 def resolve_active_server():
-    """Tries to find and verify the working port and csrf_token."""
     global _cached_target
     if _cached_target:
         port, token, use_ssl = _cached_target
@@ -122,13 +169,11 @@ def resolve_active_server():
     
     csrf_token = info["csrf_token"]
     for port in info["ports"]:
-        # Try HTTP then HTTPS
         for use_ssl in [False, True]:
             try:
                 data = fetch_from_language_server(port, csrf_token, use_ssl)
                 if data and "userStatus" in data:
                     _cached_target = (port, csrf_token, use_ssl)
-                    print(f"[Bridge] Connected to Antigravity LanguageServer on port {port} (ssl={use_ssl})")
                     return port, csrf_token, use_ssl
             except Exception:
                 continue
@@ -141,7 +186,6 @@ def format_duration(seconds):
     days = int(seconds // 86400)
     hours = int((seconds % 86400) // 3600)
     mins = int((seconds % 3600) // 60)
-    
     if days > 0:
         return f"{days}d {hours}h"
     elif hours > 0:
@@ -160,12 +204,71 @@ def parse_reset_time(iso_str):
         diff = (dt - now).total_seconds()
         readable = format_duration(diff)
         return dt.isoformat(), max(0, int(diff)), readable
-    except Exception as e:
+    except Exception:
         return iso_str, 0, "Unknown"
 
 
+def fetch_codex_usage():
+    """Fetches live rate limits from chatgpt.com using ~/.codex/auth.json."""
+    if not os.path.exists(CODEX_AUTH_FILE):
+        return None
+    try:
+        with open(CODEX_AUTH_FILE, "r", encoding="utf-8") as f:
+            auth_data = json.load(f)
+        tok = auth_data.get("tokens", {})
+        access_token = tok.get("access_token")
+        if not access_token:
+            return None
+        
+        import urllib.request
+        url = "https://chatgpt.com/backend-api/codex/usage"
+        headers = {
+            "Authorization": f"Bearer {access_token}",
+            "User-Agent": "codex/1.0.0"
+        }
+        req = urllib.request.Request(url, headers=headers)
+        with urllib.request.urlopen(req, timeout=4) as resp:
+            if resp.status == 200:
+                data = json.loads(resp.read().decode("utf-8"))
+                rate_limit = data.get("rate_limit", {})
+                primary = rate_limit.get("primary_window", {})
+                secondary = rate_limit.get("secondary_window", {})
+                
+                # Primary = 5-hour session window
+                p_used = primary.get("used_percent", 0)
+                p_rem = max(0, 100 - p_used)
+                p_reset_sec = primary.get("reset_after_seconds", 0)
+                
+                # Secondary = weekly window
+                s_used = secondary.get("used_percent", 0) if secondary else 0
+                s_rem = max(0, 100 - s_used)
+                s_reset_sec = secondary.get("reset_after_seconds", 0) if secondary else 0
+                
+                return {
+                    "status": "online",
+                    "email": data.get("email", ""),
+                    "plan": data.get("plan_type", "Plus").capitalize(),
+                    "sessionWindow": {
+                        "remainingPercent": p_rem,
+                        "usedPercent": p_used,
+                        "resetInSeconds": p_reset_sec,
+                        "resetFormatted": format_duration(p_reset_sec)
+                    },
+                    "weeklyWindow": {
+                        "remainingPercent": s_rem,
+                        "usedPercent": s_used,
+                        "resetInSeconds": s_reset_sec,
+                        "resetFormatted": format_duration(s_reset_sec)
+                    },
+                    "resetCredits": data.get("rate_limit_reset_credits", {}).get("available_count", 0)
+                }
+    except Exception as e:
+        print(f"[Bridge] Codex quota error: {e}", file=sys.stderr)
+    return None
+
+
 def get_normalized_quota_snapshot():
-    """Returns normalized quota snapshot, with caching."""
+    """Builds unified quota snapshot covering Antigravity multi-accounts and Codex."""
     global _cached_quota, _last_fetch_time
     now = time.time()
     
@@ -173,106 +276,164 @@ def get_normalized_quota_snapshot():
         if _cached_quota and (now - _last_fetch_time < CACHE_TTL_SECONDS):
             return _cached_quota
     
-    target = resolve_active_server()
-    if not target:
-        with _cache_lock:
-            if _cached_quota:
-                stale = dict(_cached_quota)
-                stale["status"] = "stale"
-                stale["staleReason"] = "Antigravity process not detected"
-                return stale
-        return {
-            "status": "offline",
-            "message": "Google Antigravity is not currently running on this PC.",
-            "updatedAt": datetime.now(timezone.utc).isoformat(),
-            "account": None,
-            "pools": {}
-        }
+    # 1. Codex limits
+    codex_data = fetch_codex_usage()
     
-    port, csrf_token, use_ssl = target
-    try:
-        raw_data = fetch_from_language_server(port, csrf_token, use_ssl)
-    except Exception as e:
-        return {
-            "status": "error",
-            "message": f"Failed to query language server: {str(e)}",
-            "updatedAt": datetime.now(timezone.utc).isoformat(),
-            "account": None,
-            "pools": {}
-        }
+    # 2. Antigravity accounts from Antigravity Tools (multi-account)
+    raw_accounts = fetch_antigravity_tools_accounts()
+    accounts_list = []
+    active_account = None
     
-    user_status = raw_data.get("userStatus", {})
-    plan_status = user_status.get("planStatus", {})
-    plan_info = plan_status.get("planInfo", {})
-    
-    configs = user_status.get("cascadeModelConfigData", {}).get("clientModelConfigs", [])
-    
-    gemini_models = []
-    claude_gpt_models = []
-    
-    for cfg in configs:
-        label = cfg.get("label", "")
-        quota = cfg.get("quotaInfo", {})
-        fraction = quota.get("remainingFraction", 1.0)
-        reset_time_raw = quota.get("resetTime")
-        reset_iso, reset_sec, reset_str = parse_reset_time(reset_time_raw)
-        
-        entry = {
-            "name": label,
-            "remainingFraction": fraction,
-            "remainingPercent": round(fraction * 100),
-            "resetTime": reset_iso,
-            "resetInSeconds": reset_sec,
-            "resetFormatted": reset_str,
-            "isExhausted": fraction <= 0.001
-        }
-        
-        name_lower = label.lower()
-        if "gemini" in name_lower:
-            gemini_models.append(entry)
-        elif any(k in name_lower for k in ["claude", "gpt", "oss"]):
-            claude_gpt_models.append(entry)
-    
-    def summarize_pool(models, pool_name):
-        if not models:
-            return {
-                "name": pool_name,
-                "remainingPercent": 100,
-                "remainingFraction": 1.0,
-                "resetTime": None,
-                "resetInSeconds": 0,
-                "resetFormatted": "Ready",
-                "isExhausted": False,
-                "modelsCount": 0
+    if raw_accounts:
+        for a in raw_accounts:
+            q = a.get("quota", {})
+            models = q.get("models", [])
+            
+            gemini_pct = 100
+            claude_pct = 100
+            gemini_reset = "Ready"
+            claude_reset = "Ready"
+            
+            for m in models:
+                name_l = m.get("name", "").lower()
+                pct = m.get("percentage", 100)
+                r_iso, r_sec, r_str = parse_reset_time(m.get("reset_time"))
+                if "gemini" in name_l:
+                    gemini_pct = min(gemini_pct, pct)
+                    gemini_reset = r_str
+                elif any(k in name_l for k in ["claude", "gpt", "oss"]):
+                    claude_pct = min(claude_pct, pct)
+                    claude_reset = r_str
+            
+            acc_entry = {
+                "id": a.get("id"),
+                "email": a.get("email"),
+                "name": a.get("name"),
+                "isCurrent": a.get("is_current", False),
+                "geminiPercent": gemini_pct,
+                "geminiReset": gemini_reset,
+                "claudePercent": claude_pct,
+                "claudeReset": claude_reset,
+                "modelsCount": len(models)
             }
-        
-        lead = models[0]
-        return {
-            "name": pool_name,
-            "remainingPercent": lead["remainingPercent"],
-            "remainingFraction": lead["remainingFraction"],
-            "resetTime": lead["resetTime"],
-            "resetInSeconds": lead["resetInSeconds"],
-            "resetFormatted": lead["resetFormatted"],
-            "isExhausted": lead["isExhausted"],
-            "modelsCount": len(models),
-            "models": models
-        }
+            accounts_list.append(acc_entry)
+            if a.get("is_current"):
+                active_account = acc_entry
     
-    snapshot = {
-        "status": "online",
-        "updatedAt": datetime.now(timezone.utc).isoformat(),
-        "account": {
-            "email": user_status.get("email", ""),
-            "name": user_status.get("name", ""),
-            "plan": plan_info.get("planName", "Pro"),
-            "promptCredits": plan_status.get("availablePromptCredits", 0),
-            "flowCredits": plan_status.get("availableFlowCredits", 0)
-        },
-        "pools": {
-            "gemini": summarize_pool(gemini_models, "Gemini Pool (Flash / Pro)"),
-            "claude_gpt": summarize_pool(claude_gpt_models, "Claude / GPT Pool (Sonnet / Opus / OSS)")
+    # 3. Direct language_server check for live session details
+    target = resolve_active_server()
+    ls_models = []
+    gemini_pool = None
+    claude_pool = None
+    plan_name = "Pro"
+    credits_prompt = 0
+    credits_flow = 0
+    
+    if target:
+        port, csrf_token, use_ssl = target
+        try:
+            raw_ls = fetch_from_language_server(port, csrf_token, use_ssl)
+            u_status = raw_ls.get("userStatus", {})
+            p_status = u_status.get("planStatus", {})
+            plan_name = p_status.get("planInfo", {}).get("planName", "Pro")
+            credits_prompt = p_status.get("availablePromptCredits", 0)
+            credits_flow = p_status.get("availableFlowCredits", 0)
+            
+            cfgs = u_status.get("cascadeModelConfigData", {}).get("clientModelConfigs", [])
+            for c in cfgs:
+                lbl = c.get("label", "")
+                q = c.get("quotaInfo", {})
+                frac = q.get("remainingFraction", 1.0)
+                r_iso, r_sec, r_str = parse_reset_time(q.get("resetTime"))
+                entry = {
+                    "name": lbl,
+                    "remainingPercent": round(frac * 100),
+                    "remainingFraction": frac,
+                    "resetFormatted": r_str,
+                    "resetTime": r_iso,
+                    "isExhausted": frac <= 0.001
+                }
+                ls_models.append(entry)
+                
+            g_models = [m for m in ls_models if "gemini" in m["name"].lower()]
+            c_models = [m for m in ls_models if any(k in m["name"].lower() for k in ["claude", "gpt", "oss"])]
+            
+            if g_models:
+                lead = g_models[0]
+                gemini_pool = {
+                    "name": "Gemini Models",
+                    "remainingPercent": lead["remainingPercent"],
+                    "remainingFraction": lead["remainingFraction"],
+                    "resetFormatted": lead["resetFormatted"],
+                    "models": g_models
+                }
+            if c_models:
+                lead = c_models[0]
+                claude_pool = {
+                    "name": "Claude & GPT Models",
+                    "remainingPercent": lead["remainingPercent"],
+                    "remainingFraction": lead["remainingFraction"],
+                    "resetFormatted": lead["resetFormatted"],
+                    "models": c_models
+                }
+        except Exception:
+            pass
+            
+    # Fallback to accounts_list if language_server not ready
+    if not gemini_pool and active_account:
+        gemini_pool = {
+            "name": "Gemini Models",
+            "remainingPercent": active_account["geminiPercent"],
+            "remainingFraction": active_account["geminiPercent"] / 100.0,
+            "resetFormatted": active_account["geminiReset"],
+            "models": []
         }
+    if not claude_pool and active_account:
+        claude_pool = {
+            "name": "Claude & GPT Models",
+            "remainingPercent": active_account["claudePercent"],
+            "remainingFraction": active_account["claudePercent"] / 100.0,
+            "resetFormatted": active_account["claudeReset"],
+            "models": []
+        }
+
+    is_any_online = bool(codex_data or target or accounts_list)
+    active_email = active_account.get("email", "") if active_account else ""
+    active_name = active_account.get("name", "") if active_account else ""
+    active_id = active_account.get("id") if active_account else None
+
+    snapshot = {
+        "status": "online" if is_any_online else "offline",
+        "updatedAt": datetime.now(timezone.utc).isoformat(),
+        "codex": codex_data,
+        "antigravity": {
+            "status": "online" if (target or accounts_list) else "offline",
+            "activeAccount": {
+                "id": active_id,
+                "email": active_email,
+                "name": active_name,
+                "plan": plan_name,
+                "promptCredits": credits_prompt,
+                "flowCredits": credits_flow
+            } if active_account else None,
+            "accounts": accounts_list,
+            "pools": {
+                "gemini": gemini_pool,
+                "claude_gpt": claude_pool
+            } if (gemini_pool or claude_pool) else None
+        },
+        # Backwards compatibility fields for widget v1
+        "account": {
+            "email": active_email,
+            "name": active_name,
+            "plan": plan_name,
+            "promptCredits": credits_prompt,
+            "flowCredits": credits_flow
+        } if active_account else None,
+        "pools": {
+            "gemini": gemini_pool,
+            "claude_gpt": claude_pool
+        } if (gemini_pool or claude_pool) else None
     }
     
     with _cache_lock:
@@ -286,12 +447,55 @@ class WidgenHandler(BaseHTTPRequestHandler):
     def send_cors_headers(self):
         self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Widgen-Client")
 
     def do_OPTIONS(self):
         self.send_response(204)
         self.send_cors_headers()
         self.end_headers()
+
+    def do_POST(self):
+        parsed = urlparse(self.path)
+        path = parsed.path
+        
+        if path == "/api/accounts/switch":
+            # Protect against cross-origin browser CSRF
+            origin = self.headers.get("Origin")
+            if origin and not (origin.startswith("http://127.0.0.1") or origin.startswith("http://localhost")):
+                self.send_response(403)
+                self.end_headers()
+                self.wfile.write(b'{"error": "Forbidden cross-origin switch request"}')
+                return
+
+            content_len = int(self.headers.get("Content-Length", 0))
+            body = self.rfile.read(content_len).decode("utf-8") if content_len > 0 else "{}"
+            try:
+                data = json.loads(body)
+                account_id = data.get("account_id") or data.get("id")
+                if not account_id:
+                    self.send_response(400)
+                    self.end_headers()
+                    self.wfile.write(b'{"error": "Missing account_id"}')
+                    return
+                
+                success = switch_antigravity_account(account_id)
+                # Invalidate cache
+                global _cached_quota
+                with _cache_lock:
+                    _cached_quota = None
+                
+                self.send_response(200 if success else 500)
+                self.send_header("Content-Type", "application/json")
+                self.send_cors_headers()
+                self.end_headers()
+                self.wfile.write(json.dumps({"success": success, "active_account_id": account_id}).encode("utf-8"))
+            except Exception as e:
+                self.send_response(500)
+                self.end_headers()
+                self.wfile.write(json.dumps({"error": str(e)}).encode("utf-8"))
+        else:
+            self.send_response(404)
+            self.end_headers()
 
     def do_GET(self):
         parsed = urlparse(self.path)
@@ -306,12 +510,23 @@ class WidgenHandler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(body)
             
+        elif path == "/api/accounts":
+            data = get_normalized_quota_snapshot()
+            accounts = data.get("antigravity", {}).get("accounts", [])
+            body = json.dumps({"accounts": accounts}, indent=2, ensure_ascii=False).encode("utf-8")
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_cors_headers()
+            self.end_headers()
+            self.wfile.write(body)
+            
         elif path == "/api/health":
             target = resolve_active_server()
             status = "connected" if target else "searching"
             payload = {
                 "status": "ok",
                 "antigravity": status,
+                "codex": "connected" if os.path.exists(CODEX_AUTH_FILE) else "missing",
                 "timestamp": datetime.now(timezone.utc).isoformat()
             }
             body = json.dumps(payload).encode("utf-8")
@@ -323,204 +538,108 @@ class WidgenHandler(BaseHTTPRequestHandler):
             
         elif path == "/" or path == "/dashboard":
             self.render_dashboard()
-            
         else:
             self.send_response(404)
             self.end_headers()
 
     def render_dashboard(self):
-        snapshot = get_normalized_quota_snapshot()
-        acc = snapshot.get("account") or {}
-        email = acc.get("email", "Unknown")
-        plan = acc.get("plan", "Standard")
-        gemini = snapshot.get("pools", {}).get("gemini", {})
-        claude = snapshot.get("pools", {}).get("claude_gpt", {})
+        data = get_normalized_quota_snapshot()
+        anti = data.get("antigravity", {})
+        codex = data.get("codex") or {}
+        accounts = anti.get("accounts", [])
         
-        gemini_pct = gemini.get("remainingPercent", 100)
-        claude_pct = claude.get("remainingPercent", 100)
-        gemini_reset = gemini.get("resetFormatted", "Ready")
-        claude_reset = claude.get("resetFormatted", "Ready")
+        acc_cards_html = ""
+        for a in accounts:
+            is_cur = a.get("isCurrent")
+            bg_card = "#1C212B" if is_cur else "#14171E"
+            border_col = "#00E5FF" if is_cur else "#282F3D"
+            btn_html = f'<span style="color:#00E5FF;font-size:12px;font-weight:bold;">● ACTIVE ON PC</span>' if is_cur else f'<button onclick="switchAccount(\'{a.get("id")}\')" style="background:#282F3D;color:#FFF;border:none;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:12px;">Switch to this</button>'
+            
+            acc_cards_html += f"""
+            <div style="background:{bg_card};border:1px solid {border_col};border-radius:12px;padding:14px;margin-bottom:10px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <div>
+                        <div style="font-weight:600;font-size:14px;">{a.get('email')}</div>
+                        <div style="color:#9CA3AF;font-size:12px;">{a.get('name')}</div>
+                    </div>
+                    <div>{btn_html}</div>
+                </div>
+                <div style="display:flex;gap:12px;margin-top:10px;font-size:12px;">
+                    <div>Gemini: <b style="color:#00E5FF;">{a.get('geminiPercent')}%</b> (reset: {a.get('geminiReset')})</div>
+                    <div>Claude: <b style="color:#A855F7;">{a.get('claudePercent')}%</b> (reset: {a.get('claudeReset')})</div>
+                </div>
+            </div>
+            """
+            
+        # Codex section
+        codex_session = codex.get("sessionWindow", {})
+        codex_weekly = codex.get("weeklyWindow", {})
         
         html = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Antigravity Limits — Widgen</title>
+    <title>AI Limits — Unified Dashboard</title>
     <style>
-        :root {{
-            --bg: #0B0D11;
-            --surface: #14171E;
-            --surface-elevated: #1C212B;
-            --border: #282F3D;
-            --text-primary: #F3F4F6;
-            --text-secondary: #9CA3AF;
-            --gemini-cyan: #00E5FF;
-            --claude-purple: #A855F7;
-            --green: #10B981;
-            --amber: #F59E0B;
-            --rose: #EF4444;
-        }}
-        * {{ box-sizing: border-box; margin: 0; padding: 0; }}
         body {{
-            background: var(--bg);
-            color: var(--text-primary);
+            background: #0B0D11;
+            color: #F3F4F6;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             padding: 24px 16px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-height: 100vh;
         }}
-        .container {{
-            width: 100%;
-            max-width: 480px;
-        }}
-        header {{
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 24px;
-        }}
-        .brand {{
-            font-size: 20px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }}
-        .badge {{
-            background: var(--surface-elevated);
-            color: var(--gemini-cyan);
-            font-size: 11px;
-            font-weight: 600;
-            padding: 4px 8px;
-            border-radius: 6px;
-            border: 1px solid var(--border);
-            text-transform: uppercase;
-        }}
-        .account-card {{
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }}
-        .quota-card {{
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 16px;
-        }}
-        .card-header {{
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            margin-bottom: 12px;
-        }}
-        .card-title {{
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--text-secondary);
-        }}
-        .card-percent {{
-            font-size: 32px;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-        }}
-        .progress-bar-bg {{
-            height: 10px;
-            background: var(--surface-elevated);
-            border-radius: 5px;
-            overflow: hidden;
-            margin-bottom: 12px;
-        }}
-        .progress-bar-fill {{
-            height: 100%;
-            border-radius: 5px;
-            transition: width 0.4s ease;
-        }}
-        .card-meta {{
-            display: flex;
-            justify-content: space-between;
-            font-size: 13px;
-            color: var(--text-secondary);
-        }}
-        .endpoint-card {{
-            background: var(--surface);
-            border: 1px dashed var(--border);
-            border-radius: 16px;
-            padding: 16px;
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin-top: 24px;
-        }}
-        code {{
-            background: var(--surface-elevated);
-            padding: 2px 6px;
-            border-radius: 4px;
-            color: var(--gemini-cyan);
-            font-family: monospace;
-        }}
+        .container {{ width: 100%; max-width: 520px; }}
+        h2 {{ font-size: 18px; margin: 20px 0 12px; color: #9CA3AF; text-transform: uppercase; font-size: 12px; letter-spacing: 1px; }}
+        .card {{ background: #14171E; border: 1px solid #282F3D; border-radius: 14px; padding: 16px; margin-bottom: 14px; }}
+        .row {{ display: flex; justify-content: space-between; margin-bottom: 8px; }}
+        .bar-bg {{ height: 8px; background: #1C212B; border-radius: 4px; overflow: hidden; margin-bottom: 6px; }}
+        .bar-fill {{ height: 100%; border-radius: 4px; }}
     </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <div class="brand">
-                <span>Antigravity Limits</span>
-            </div>
-            <div class="badge">{plan}</div>
-        </header>
+        <h1 style="font-size:22px;font-weight:800;margin-bottom:20px;">AI Limits Monitor</h1>
 
-        <div class="account-card">
-            <div>
-                <div style="font-size: 14px; font-weight: 600;">{email}</div>
-                <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">Credits: {acc.get('promptCredits', 0)} prompt · {acc.get('flowCredits', 0)} flow</div>
+        <h2>OpenAI Codex</h2>
+        <div class="card">
+            <div class="row">
+                <span>Codex Session (5h window)</span>
+                <b style="color:#10B981;">{codex_session.get('remainingPercent', 100)}% left</b>
             </div>
-            <div style="width: 10px; height: 10px; border-radius: 50%; background: {'#10B981' if snapshot.get('status') == 'online' else '#EF4444'};"></div>
+            <div class="bar-bg"><div class="bar-fill" style="width:{codex_session.get('remainingPercent', 100)}%;background:#10B981;"></div></div>
+            <div style="font-size:12px;color:#9CA3AF;">Reset in: {codex_session.get('resetFormatted', 'Ready')}</div>
+
+            <div class="row" style="margin-top:14px;">
+                <span>Codex Weekly Limit</span>
+                <b style="color:{'#EF4444' if codex_weekly.get('remainingPercent', 100) < 20 else '#F59E0B'};">{codex_weekly.get('remainingPercent', 100)}% left</b>
+            </div>
+            <div class="bar-bg"><div class="bar-fill" style="width:{codex_weekly.get('remainingPercent', 100)}%;background:{'#EF4444' if codex_weekly.get('remainingPercent', 100) < 20 else '#F59E0B'};"></div></div>
+            <div style="font-size:12px;color:#9CA3AF;">Reset in: {codex_weekly.get('resetFormatted', 'Ready')}</div>
         </div>
 
-        <div class="quota-card">
-            <div class="card-header">
-                <span class="card-title">Gemini Models (Flash/Pro)</span>
-                <span class="card-percent" style="color: var(--gemini-cyan);">{gemini_pct}%</span>
-            </div>
-            <div class="progress-bar-bg">
-                <div class="progress-bar-fill" style="width: {gemini_pct}%; background: var(--gemini-cyan);"></div>
-            </div>
-            <div class="card-meta">
-                <span>Session limit</span>
-                <span>Reset in: <b>{gemini_reset}</b></span>
-            </div>
-        </div>
+        <h2>Google Antigravity Accounts</h2>
+        {acc_cards_html}
 
-        <div class="quota-card">
-            <div class="card-header">
-                <span class="card-title">Claude & GPT Models</span>
-                <span class="card-percent" style="color: var(--claude-purple);">{claude_pct}%</span>
-            </div>
-            <div class="progress-bar-bg">
-                <div class="progress-bar-fill" style="width: {claude_pct}%; background: var(--claude-purple);"></div>
-            </div>
-            <div class="card-meta">
-                <span>Weekly quota</span>
-                <span>Reset in: <b>{claude_reset}</b></span>
-            </div>
-        </div>
-
-        <div class="endpoint-card">
-            <div>Widget API endpoint:</div>
-            <div style="margin-top: 6px;"><code>http://&lt;PC-LAN-IP&gt;:{BRIDGE_PORT}/api/quota</code></div>
-            <div style="margin-top: 8px;">Enter this IP address in the mobile app settings to sync the widget.</div>
+        <div style="background:#14171E;border:1px dashed #282F3D;border-radius:12px;padding:12px;font-size:12px;color:#9CA3AF;margin-top:20px;">
+            API endpoint: <code>http://100.82.252.86:{BRIDGE_PORT}/api/quota</code>
         </div>
     </div>
+
     <script>
-        setTimeout(() => {{ location.reload(); }}, 30000);
+        function switchAccount(accId) {{
+            fetch('/api/accounts/switch', {{
+                method: 'POST',
+                headers: {{ 'Content-Type': 'application/json' }},
+                body: JSON.stringify({{ account_id: accId }})
+            }}).then(r => r.json()).then(res => {{
+                if (res.success) location.reload();
+                else alert('Switch failed');
+            }});
+        }}
+        setTimeout(() => location.reload(), 30000);
     </script>
 </body>
 </html>
@@ -533,22 +652,12 @@ class WidgenHandler(BaseHTTPRequestHandler):
 
 
 def run_bridge():
-    print(f"=== Antigravity Widgen Bridge ===")
+    print(f"=== Unified AI Limits Bridge (Antigravity Multi-Account + Codex) ===")
     print(f"Starting on http://{BRIDGE_HOST}:{BRIDGE_PORT}...")
     server = HTTPServer((BRIDGE_HOST, BRIDGE_PORT), WidgenHandler)
-    
-    target = resolve_active_server()
-    if target:
-        print(f"[Bridge] Connected! Verified live Antigravity connection.")
-    else:
-        print(f"[Bridge] LanguageServer not detected yet. Will auto-discover on first request.")
-        
-    print(f"[Bridge] REST API available at: http://localhost:{BRIDGE_PORT}/api/quota")
-    print(f"[Bridge] Mobile web view at:    http://localhost:{BRIDGE_PORT}/")
     try:
         server.serve_forever()
     except KeyboardInterrupt:
-        print("\nStopping Widgen Bridge.")
         server.server_close()
 
 
