@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Antigravity Limits</string>
+    <string name="widget_name">Antigravity Limits</string>
+    <string name="widget_description">Live quota monitor for Google Antigravity models</string>
+    <string name="gemini_pool">Gemini Flash / Pro</string>
+    <string name="claude_pool">Claude / GPT Pool</string>
+    <string name="reset_in">Reset in %s</string>
+    <string name="sync_now">Refresh</string>
+</resources>
