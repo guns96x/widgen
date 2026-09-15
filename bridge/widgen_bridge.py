@@ -18,13 +18,14 @@ import threading
 import hmac
 import secrets
 import html
-from http.server import HTTPServer, BaseHTTPRequestHandler
+from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse
 from datetime import datetime, timezone
 
 BRIDGE_PORT = int(os.environ.get("WIDGEN_BRIDGE_PORT", "59123"))
 BRIDGE_HOST = os.environ.get("WIDGEN_BRIDGE_HOST", "0.0.0.0")
 CACHE_TTL_SECONDS = 10
+MAX_JSON_BODY_BYTES = 8 * 1024
 
 # Paths
 USER_PROFILE = os.environ.get("USERPROFILE", "C:\\Users\\pavlo")
@@ -38,6 +39,7 @@ _cache_lock = threading.Lock()
 _cached_quota = None
 _last_fetch_time = 0
 _cached_target = None  # (port, csrf_token, use_ssl)
+_api_token_cache = None
 
 ALLOWED_ORIGINS = {
     f"http://127.0.0.1:{BRIDGE_PORT}",
@@ -48,14 +50,20 @@ ALLOWED_ORIGINS = {
 def get_api_token() -> str:
     """
     Retrieves or generates shared bearer token for API security.
+    Deterministic across calls within process lifetime.
     Priority:
     1. Env var WIDGEN_API_TOKEN
-    2. Config file ~/.widgen/config.json
-    3. Auto-generate 32-byte hex token and persist to ~/.widgen/config.json
+    2. Process-level memory cache _api_token_cache
+    3. Config file ~/.widgen/config.json
+    4. Auto-generate 32-byte hex token, cache in memory, and persist to ~/.widgen/config.json
     """
+    global _api_token_cache
     env_tok = os.environ.get("WIDGEN_API_TOKEN")
     if env_tok and env_tok.strip():
         return env_tok.strip()
+
+    if _api_token_cache:
+        return _api_token_cache
 
     if os.path.exists(WIDGEN_CONFIG_FILE):
         try:
@@ -63,19 +71,21 @@ def get_api_token() -> str:
                 data = json.load(f)
                 tok = data.get("api_token")
                 if tok and str(tok).strip():
-                    return str(tok).strip()
+                    _api_token_cache = str(tok).strip()
+                    return _api_token_cache
         except Exception:
             pass
 
-    # Auto-generate secure token
+    # Auto-generate secure token and cache in memory
     new_token = secrets.token_hex(32)
+    _api_token_cache = new_token
     try:
         os.makedirs(WIDGEN_DIR, exist_ok=True)
         with open(WIDGEN_CONFIG_FILE, "w", encoding="utf-8") as f:
             json.dump({"api_token": new_token}, f, indent=2)
     except Exception as e:
         print(f"[Bridge] Warning: could not persist api_token: {e}", file=sys.stderr)
-    return new_token
+    return _api_token_cache
 
 
 def mask_token(tok: str) -> str:
@@ -544,8 +554,34 @@ class WidgenHandler(BaseHTTPRequestHandler):
                 self.wfile.write(b'{"error": "Forbidden cross-origin switch request"}')
                 return
 
-            content_len = int(self.headers.get("Content-Length", 0))
-            body = self.rfile.read(content_len).decode("utf-8") if content_len > 0 else "{}"
+            # Validate Content-Length
+            try:
+                content_len_header = self.headers.get("Content-Length")
+                if content_len_header is None:
+                    self.send_response(400)
+                    self.end_headers()
+                    self.wfile.write(b'{"error": "Missing Content-Length"}')
+                    return
+                content_len = int(content_len_header)
+            except (ValueError, TypeError):
+                self.send_response(400)
+                self.end_headers()
+                self.wfile.write(b'{"error": "Invalid Content-Length"}')
+                return
+
+            if content_len <= 0:
+                self.send_response(400)
+                self.end_headers()
+                self.wfile.write(b'{"error": "Empty request body"}')
+                return
+
+            if content_len > MAX_JSON_BODY_BYTES:
+                self.send_response(413)
+                self.end_headers()
+                self.wfile.write(b'{"error": "Payload Too Large"}')
+                return
+
+            body = self.rfile.read(content_len).decode("utf-8")
             try:
                 data = json.loads(body)
                 account_id = data.get("account_id") or data.get("id")
@@ -554,13 +590,26 @@ class WidgenHandler(BaseHTTPRequestHandler):
                     self.end_headers()
                     self.wfile.write(b'{"error": "Missing account_id"}')
                     return
-                
+
+                # Server-side validation of account existence
+                known_accounts = fetch_antigravity_tools_accounts()
+                if known_accounts is not None:
+                    known_ids = {a.get("id") for a in known_accounts if a.get("id")}
+                    if account_id not in known_ids:
+                        self.send_response(404)
+                        self.send_header("Content-Type", "application/json")
+                        self.send_cors_headers()
+                        self.end_headers()
+                        self.wfile.write(json.dumps({"error": "Account not found", "account_id": account_id}).encode("utf-8"))
+                        return
+
                 success = switch_antigravity_account(account_id)
                 # Invalidate cache
-                global _cached_quota
+                global _cached_quota, _cached_target
                 with _cache_lock:
                     _cached_quota = None
-                
+                    _cached_target = None
+
                 self.send_response(200 if success else 500)
                 self.send_header("Content-Type", "application/json")
                 self.send_cors_headers()
@@ -760,7 +809,8 @@ def run_bridge():
     print(f"=== Unified AI Limits Bridge (Antigravity Multi-Account + Codex) ===")
     print(f"Starting on http://{BRIDGE_HOST}:{BRIDGE_PORT}...")
     print(f"[Bridge] API Bearer Token: {mask_token(token)}")
-    server = HTTPServer((BRIDGE_HOST, BRIDGE_PORT), WidgenHandler)
+    server = ThreadingHTTPServer((BRIDGE_HOST, BRIDGE_PORT), WidgenHandler)
+    server.daemon_threads = True
     try:
         server.serve_forever()
     except KeyboardInterrupt:
