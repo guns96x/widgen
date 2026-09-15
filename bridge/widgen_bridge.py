@@ -20,6 +20,7 @@ import secrets
 import html
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse
+from pathlib import Path
 from datetime import datetime, timezone
 
 BRIDGE_PORT = int(os.environ.get("WIDGEN_BRIDGE_PORT", "59123"))
@@ -28,7 +29,7 @@ CACHE_TTL_SECONDS = 10
 MAX_JSON_BODY_BYTES = 8 * 1024
 
 # Paths
-USER_PROFILE = os.environ.get("USERPROFILE", "C:\\Users\\pavlo")
+USER_PROFILE = os.environ.get("USERPROFILE") or str(Path.home())
 ANTIGRAVITY_TOOLS_DIR = os.path.join(USER_PROFILE, ".antigravity_tools")
 CODEX_AUTH_FILE = os.path.join(USER_PROFILE, ".codex", "auth.json")
 WIDGEN_DIR = os.path.join(USER_PROFILE, ".widgen")
@@ -527,6 +528,17 @@ class WidgenHandler(BaseHTTPRequestHandler):
             self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
             self.send_header("Vary", "Origin")
 
+    def send_json_error(self, code: int, message: str, extra: dict = None):
+        payload = {"error": message}
+        if extra:
+            payload.update(extra)
+        body = json.dumps(payload).encode("utf-8")
+        self.send_response(code)
+        self.send_header("Content-Type", "application/json")
+        self.send_cors_headers()
+        self.end_headers()
+        self.wfile.write(body)
+
     def do_OPTIONS(self):
         self.send_response(204)
         self.send_cors_headers()
@@ -537,72 +549,77 @@ class WidgenHandler(BaseHTTPRequestHandler):
         path = parsed.path
         
         if path == "/api/accounts/switch":
+            # Drain body if present to avoid TCP RST on client
+            try:
+                cl = int(self.headers.get("Content-Length", 0))
+                if 0 < cl <= MAX_JSON_BODY_BYTES:
+                    body_bytes = self.rfile.read(cl)
+                else:
+                    body_bytes = b""
+            except Exception:
+                body_bytes = b""
+
             # API Authorization
             if not is_authorized(self.headers):
-                self.send_response(401)
-                self.send_header("Content-Type", "application/json")
-                self.send_cors_headers()
-                self.end_headers()
-                self.wfile.write(b'{"error": "unauthorized"}')
+                self.send_json_error(401, "unauthorized")
                 return
 
             # CSRF protection: if Origin header present, must match allowlist
             origin = self.headers.get("Origin")
             if origin and origin not in ALLOWED_ORIGINS:
-                self.send_response(403)
-                self.end_headers()
-                self.wfile.write(b'{"error": "Forbidden cross-origin switch request"}')
+                self.send_json_error(403, "Forbidden cross-origin switch request")
                 return
 
             # Validate Content-Length
             try:
                 content_len_header = self.headers.get("Content-Length")
                 if content_len_header is None:
-                    self.send_response(400)
-                    self.end_headers()
-                    self.wfile.write(b'{"error": "Missing Content-Length"}')
+                    self.send_json_error(400, "Missing Content-Length")
                     return
                 content_len = int(content_len_header)
             except (ValueError, TypeError):
-                self.send_response(400)
-                self.end_headers()
-                self.wfile.write(b'{"error": "Invalid Content-Length"}')
+                self.send_json_error(400, "Invalid Content-Length")
                 return
 
             if content_len <= 0:
-                self.send_response(400)
-                self.end_headers()
-                self.wfile.write(b'{"error": "Empty request body"}')
+                self.send_json_error(400, "Empty request body")
                 return
 
             if content_len > MAX_JSON_BODY_BYTES:
-                self.send_response(413)
-                self.end_headers()
-                self.wfile.write(b'{"error": "Payload Too Large"}')
+                self.send_json_error(413, "Payload Too Large")
                 return
 
-            body = self.rfile.read(content_len).decode("utf-8")
+            try:
+                body = body_bytes.decode("utf-8")
+            except Exception:
+                self.send_json_error(400, "Invalid payload encoding")
+                return
+
             try:
                 data = json.loads(body)
-                account_id = data.get("account_id") or data.get("id")
-                if not account_id:
-                    self.send_response(400)
-                    self.end_headers()
-                    self.wfile.write(b'{"error": "Missing account_id"}')
+            except (json.JSONDecodeError, ValueError):
+                self.send_json_error(400, "Invalid JSON")
+                return
+
+            if not isinstance(data, dict):
+                self.send_json_error(400, "JSON payload must be an object")
+                return
+
+            account_id = data.get("account_id") or data.get("id")
+            if not isinstance(account_id, str) or not account_id.strip():
+                self.send_json_error(400, "Invalid account_id")
+                return
+            account_id = account_id.strip()
+
+            # Server-side validation of account existence
+            known_accounts = fetch_antigravity_tools_accounts()
+            if known_accounts is not None:
+                known_ids = {a.get("id") for a in known_accounts if a.get("id")}
+                if account_id not in known_ids:
+                    self.send_json_error(404, "Account not found", {"account_id": account_id})
                     return
 
-                # Server-side validation of account existence
-                known_accounts = fetch_antigravity_tools_accounts()
-                if known_accounts is not None:
-                    known_ids = {a.get("id") for a in known_accounts if a.get("id")}
-                    if account_id not in known_ids:
-                        self.send_response(404)
-                        self.send_header("Content-Type", "application/json")
-                        self.send_cors_headers()
-                        self.end_headers()
-                        self.wfile.write(json.dumps({"error": "Account not found", "account_id": account_id}).encode("utf-8"))
-                        return
-
+            try:
                 success = switch_antigravity_account(account_id)
                 # Invalidate cache
                 global _cached_quota, _cached_target
@@ -616,9 +633,7 @@ class WidgenHandler(BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(json.dumps({"success": success, "active_account_id": account_id}).encode("utf-8"))
             except Exception as e:
-                self.send_response(500)
-                self.end_headers()
-                self.wfile.write(json.dumps({"error": str(e)}).encode("utf-8"))
+                self.send_json_error(500, str(e))
         else:
             self.send_response(404)
             self.end_headers()

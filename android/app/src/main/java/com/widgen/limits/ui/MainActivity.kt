@@ -36,6 +36,7 @@ import com.widgen.limits.data.model.CodexInfo
 import com.widgen.limits.data.model.ModelQuota
 import com.widgen.limits.data.model.PoolInfo
 import com.widgen.limits.data.model.QuotaSnapshot
+import com.widgen.limits.data.repository.BridgeConnectionState
 import com.widgen.limits.data.repository.QuotaRepository
 import com.widgen.limits.data.util.BridgeUrlValidator
 import com.widgen.limits.ui.theme.*
@@ -63,9 +64,12 @@ fun MainScreen(
     repository: QuotaRepository
 ) {
     val snapshot by repository.snapshotFlow.collectAsStateWithLifecycle()
+    val connectionState by repository.connectionState.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     var isRefreshing by remember { mutableStateOf(false) }
+    var switchingAccountId by remember { mutableStateOf<String?>(null) }
     var showSettingsDialog by remember { mutableStateOf(false) }
     var expandedModels by remember { mutableStateOf(false) }
 
@@ -76,6 +80,7 @@ fun MainScreen(
             .statusBarsPadding()
             .navigationBarsPadding(),
         containerColor = BgDark,
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = {
@@ -87,18 +92,52 @@ fun MainScreen(
                             color = TextPrimary
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Surface(
-                            shape = RoundedCornerShape(6.dp),
-                            color = SurfaceElevated,
-                            border = androidx.compose.foundation.BorderStroke(1.dp, BorderDark)
-                        ) {
-                            Text(
-                                text = "MULTI-ACCOUNT",
-                                fontSize = 10.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = GeminiCyan,
-                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
-                            )
+                        when (val state = connectionState) {
+                            is BridgeConnectionState.Online -> {
+                                Surface(
+                                    shape = RoundedCornerShape(6.dp),
+                                    color = StatusGreen.copy(alpha = 0.15f),
+                                    border = androidx.compose.foundation.BorderStroke(1.dp, StatusGreen.copy(alpha = 0.5f))
+                                ) {
+                                    Text(
+                                        text = "ONLINE",
+                                        fontSize = 10.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = StatusGreen,
+                                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                                    )
+                                }
+                            }
+                            is BridgeConnectionState.Stale -> {
+                                Surface(
+                                    shape = RoundedCornerShape(6.dp),
+                                    color = StatusAmber.copy(alpha = 0.15f),
+                                    border = androidx.compose.foundation.BorderStroke(1.dp, StatusAmber.copy(alpha = 0.5f))
+                                ) {
+                                    Text(
+                                        text = "STALE",
+                                        fontSize = 10.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = StatusAmber,
+                                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                                    )
+                                }
+                            }
+                            is BridgeConnectionState.Unknown -> {
+                                Surface(
+                                    shape = RoundedCornerShape(6.dp),
+                                    color = SurfaceElevated,
+                                    border = androidx.compose.foundation.BorderStroke(1.dp, BorderDark)
+                                ) {
+                                    Text(
+                                        text = "OFFLINE",
+                                        fontSize = 10.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = TextSecondary,
+                                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                                    )
+                                }
+                            }
                         }
                     }
                 },
@@ -120,8 +159,12 @@ fun MainScreen(
                     if (!isRefreshing) {
                         isRefreshing = true
                         scope.launch {
-                            repository.refreshQuota()
+                            val result = repository.refreshQuota()
                             isRefreshing = false
+                            if (result.isFailure) {
+                                val msg = result.exceptionOrNull()?.message ?: "Unable to connect"
+                                snackbarHostState.showSnackbar("Refresh failed: $msg")
+                            }
                         }
                     }
                 },
@@ -219,9 +262,18 @@ fun MainScreen(
                 items(accounts) { acc ->
                     AccountSwitchCard(
                         account = acc,
+                        isSwitching = (switchingAccountId == acc.id),
                         onSwitch = {
-                            scope.launch {
-                                repository.switchAccount(acc.id)
+                            if (switchingAccountId == null) {
+                                switchingAccountId = acc.id
+                                scope.launch {
+                                    val res = repository.switchAccount(acc.id)
+                                    switchingAccountId = null
+                                    if (res.isFailure) {
+                                        val err = res.exceptionOrNull()?.message ?: "Switch failed"
+                                        snackbarHostState.showSnackbar("Switch failed: $err")
+                                    }
+                                }
                             }
                         }
                     )
@@ -316,11 +368,22 @@ fun MainScreen(
             currentToken = repository.getApiToken(),
             onDismiss = { showSettingsDialog = false },
             onSave = { newUrl, newToken ->
-                repository.setBridgeUrl(newUrl)
-                repository.setApiToken(newToken)
-                showSettingsDialog = false
-                scope.launch {
-                    repository.refreshQuota()
+                val saveRes = repository.setBridgeUrl(newUrl)
+                if (saveRes.isSuccess) {
+                    repository.setApiToken(newToken)
+                    showSettingsDialog = false
+                    scope.launch {
+                        val refRes = repository.refreshQuota()
+                        if (refRes.isFailure) {
+                            val err = refRes.exceptionOrNull()?.message ?: "Unable to connect"
+                            snackbarHostState.showSnackbar("Connected, but refresh failed: $err")
+                        }
+                    }
+                } else {
+                    scope.launch {
+                        val err = saveRes.exceptionOrNull()?.message ?: "Invalid Bridge URL"
+                        snackbarHostState.showSnackbar("Save failed: $err")
+                    }
                 }
             }
         )
@@ -515,6 +578,7 @@ fun CodexOfflineCard() {
 @Composable
 fun AccountSwitchCard(
     account: AccountDetail,
+    isSwitching: Boolean = false,
     onSwitch: () -> Unit
 ) {
     val isCur = account.isCurrent
@@ -528,7 +592,7 @@ fun AccountSwitchCard(
             .background(bgCol)
             .border(if (isCur) 1.5.dp else 1.dp, borderCol, RoundedCornerShape(16.dp))
             .padding(14.dp)
-            .clickable(enabled = !isCur) { onSwitch() }
+            .clickable(enabled = !isCur && !isSwitching) { onSwitch() }
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -578,19 +642,28 @@ fun AccountSwitchCard(
             } else {
                 FilledTonalButton(
                     onClick = onSwitch,
+                    enabled = !isSwitching,
                     contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
                     colors = ButtonDefaults.filledTonalButtonColors(
                         containerColor = SurfaceElevated,
                         contentColor = TextPrimary
                     )
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.SwapHoriz,
-                        contentDescription = "Switch",
-                        modifier = Modifier.size(14.dp)
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(text = "Switch", fontSize = 12.sp)
+                    if (isSwitching) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(14.dp),
+                            color = GeminiCyan,
+                            strokeWidth = 2.dp
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Default.SwapHoriz,
+                            contentDescription = "Switch",
+                            modifier = Modifier.size(14.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(text = "Switch", fontSize = 12.sp)
+                    }
                 }
             }
         }

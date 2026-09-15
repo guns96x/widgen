@@ -12,6 +12,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
+sealed interface BridgeConnectionState {
+    data object Unknown : BridgeConnectionState
+    data object Online : BridgeConnectionState
+    data class Stale(val reason: String) : BridgeConnectionState
+}
+
 class QuotaRepository internal constructor(
     context: Context,
     private val tokenStore: ApiTokenStore = PreferencesApiTokenStore(context)
@@ -23,6 +29,9 @@ class QuotaRepository internal constructor(
 
     private val _snapshotFlow = MutableStateFlow<QuotaSnapshot?>(loadCachedSnapshot())
     val snapshotFlow: StateFlow<QuotaSnapshot?> = _snapshotFlow.asStateFlow()
+
+    private val _connectionState = MutableStateFlow<BridgeConnectionState>(BridgeConnectionState.Unknown)
+    val connectionState: StateFlow<BridgeConnectionState> = _connectionState.asStateFlow()
 
     init {
         // One-time migration of legacy token if present
@@ -39,9 +48,11 @@ class QuotaRepository internal constructor(
         return prefs.getString(KEY_BRIDGE_URL, DEFAULT_BRIDGE_URL) ?: DEFAULT_BRIDGE_URL
     }
 
-    fun setBridgeUrl(url: String) {
-        val normalized = BridgeUrlValidator.normalize(url).getOrDefault(url.trim())
-        prefs.edit().putString(KEY_BRIDGE_URL, normalized).apply()
+    fun setBridgeUrl(url: String): Result<Unit> {
+        val normalized = BridgeUrlValidator.normalize(url)
+        return normalized.map { clean ->
+            prefs.edit().putString(KEY_BRIDGE_URL, clean).apply()
+        }
     }
 
     fun getApiToken(): String {
@@ -59,7 +70,9 @@ class QuotaRepository internal constructor(
     suspend fun refreshQuota(): Result<QuotaSnapshot> {
         val url = getBridgeUrl()
         if (url.isBlank()) {
-            return Result.failure(IllegalStateException("Bridge URL not configured"))
+            val err = IllegalStateException("Bridge URL not configured")
+            _connectionState.value = BridgeConnectionState.Stale("Bridge not configured")
+            return Result.failure(err)
         }
         val token = getApiToken()
         val result = apiClient.fetchQuota(url, token)
@@ -68,7 +81,11 @@ class QuotaRepository internal constructor(
             if (snapshot != null) {
                 saveSnapshot(snapshot)
                 _snapshotFlow.value = snapshot
+                _connectionState.value = BridgeConnectionState.Online
             }
+        } else {
+            val reason = result.exceptionOrNull()?.message ?: "Connection failed"
+            _connectionState.value = BridgeConnectionState.Stale(reason)
         }
         return result
     }

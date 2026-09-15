@@ -135,6 +135,35 @@ class TestHttpApiIntegration(unittest.TestCase):
         )
         self.assertEqual(status, 400)
 
+    def test_switch_malformed_json(self):
+        headers = {
+            "Authorization": f"Bearer {self.test_token}",
+            "Content-Type": "application/json"
+        }
+        status, _, body = self._request(
+            "/api/accounts/switch",
+            method="POST",
+            headers=headers,
+            data="{not_valid_json"
+        )
+        self.assertEqual(status, 400)
+        self.assertIn("Invalid JSON", body)
+
+    def test_switch_invalid_account_id_types(self):
+        headers = {
+            "Authorization": f"Bearer {self.test_token}",
+            "Content-Type": "application/json"
+        }
+        for bad_id in [123, [], {}, "   "]:
+            status, _, body = self._request(
+                "/api/accounts/switch",
+                method="POST",
+                headers=headers,
+                data=json.dumps({"account_id": bad_id})
+            )
+            self.assertEqual(status, 400)
+            self.assertIn("Invalid account_id", body)
+
     @patch("widgen_bridge.fetch_antigravity_tools_accounts")
     def test_switch_unknown_account(self, mock_fetch):
         mock_fetch.return_value = [{"id": "known-1"}]
