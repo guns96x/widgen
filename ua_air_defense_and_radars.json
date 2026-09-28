@@ -1,0 +1,3909 @@
+{
+  "metadata": {
+    "title": "Довідник РЛС, тактичних РЛС, БпЛА-перехоплювачів та систем ППО СВ України (до малої дальності)",
+    "title_en": "Comprehensive Directory of Radars, Tactical Radars, Interceptor UAVs, and Ground Forces Air Defense Systems of Ukraine (up to SHORAD)",
+    "version": "1.1.0",
+    "last_updated": "2026-09-28",
+    "total_items": 101,
+    "description": "Вичерпна база даних озброєння з усіма варіаціями написання (українською, англійською, транслітерації, NATO reporting names, індекси ГРАУ/DoD, абревіатури, сленг моніторингових Telegram-каналів типу «Миколаївський Ваньок»/«єРадар»/«Monitor», відмінкові форми та типові помилки) для використання в NLP, парсингу, регулярних виразах, пошукових системах та моніторингу повітряної обстановки.",
+    "categories_summary": {
+      "radar_surveillance": "Оглядові, чергові та трьохкоординатні РЛС великої та середньої дальності",
+      "radar_tactical": "Тактичні РЛС (контрбатарейні, маловисотні, виявлення дронів, мобільні та портативні)",
+      "interceptor_uav": "БпЛА-перехоплювачі (зенітні FPV-дрони, швидкісні перехоплювачі Shahed/розвідників, сіткомети)",
+      "vshorad_manpads": "ПЗРК (переносні зенітно-ракетні комплекси дуже малої дальності / ближньої дії)",
+      "vshorad_spaag_artillery": "Зенітна артилерія, ЗСУ, ЗАК, мобільні вогневі групи (МВГ), кулемети та прицільні комплекси",
+      "shorad_sam": "ЗРК та ЗПРК малої дальності (SHORAD / Зенітно-ракетні та ракетно-гарматні комплекси)"
+    }
+  },
+  "items": [
+    {
+      "id": "radar_p18_malakhit",
+      "canonical_name": "П-18 «Малахіт» / 1РЛ131",
+      "category": "radar_surveillance",
+      "sub_category": "2D оглядова РЛС метрового діапазону (VHF)",
+      "origin": "Україна / СРСР (модернізація «Укрспецтехніка»)",
+      "range_class": "early_warning_surveillance",
+      "max_range_km": 400,
+      "max_altitude_km": 35,
+      "names": {
+        "uk": "П-18 «Малахіт» (1РЛ131)",
+        "en": "P-18 Malakhit (1RL131)",
+        "nato": "Spoon Rest D",
+        "grau": "1РЛ131"
+      },
+      "variations": [
+        "П-18",
+        "П18",
+        "P-18",
+        "P18",
+        "П-18 Малахіт",
+        "П-18 «Малахіт»",
+        "П18 Малахіт",
+        "Малахіт",
+        "Malakhit",
+        "P-18 Malakhit",
+        "P18 Malakhit",
+        "1РЛ131",
+        "1RL131",
+        "1-РЛ-131",
+        "1-RL-131",
+        "П-18 Терек",
+        "Терек",
+        "P-18 Terek",
+        "Terek",
+        "Spoon Rest",
+        "Spoon Rest D",
+        "SpoonRest",
+        "РЛС Малахіт",
+        "РЛС П-18",
+        "радар Малахіт",
+        "радар П-18",
+        "станція П-18",
+        "П-18О",
+        "П-18М",
+        "П18-Малахіт",
+        "P18-Malakhit",
+        "П-18 «Терек»",
+        "1рл131 Малахіт",
+        "Малахит",
+        "РЛС Малахит"
+      ],
+      "tags": [
+        "radar",
+        "surveillance",
+        "vhf",
+        "ukraine",
+        "malakhit",
+        "early_warning"
+      ]
+    },
+    {
+      "id": "radar_p19_bronya",
+      "canonical_name": "П-19 «Броня» / 1РЛ134",
+      "category": "radar_surveillance",
+      "sub_category": "Маловисотна 2D РЛС дециметрового діапазону (UHF)",
+      "origin": "СРСР / Україна",
+      "range_class": "low_altitude_surveillance",
+      "max_range_km": 160,
+      "max_altitude_km": 6,
+      "names": {
+        "uk": "П-19 «Броня» (1РЛ134)",
+        "en": "P-19 Bronya (1RL134)",
+        "nato": "Flat Face B",
+        "grau": "1РЛ134"
+      },
+      "variations": [
+        "П-19",
+        "П19",
+        "P-19",
+        "P19",
+        "П-19 Броня",
+        "П-19 «Броня»",
+        "П19 Броня",
+        "Броня",
+        "Bronya",
+        "P-19 Bronya",
+        "P19 Bronya",
+        "1РЛ134",
+        "1RL134",
+        "1-РЛ-134",
+        "Flat Face",
+        "Flat Face B",
+        "FlatFace",
+        "РЛС Броня",
+        "РЛС П-19",
+        "радар П-19",
+        "станція П-19",
+        "П-19МА",
+        "П-19МУ",
+        "П19МА",
+        "P-19MA",
+        "P-19MU"
+      ],
+      "tags": [
+        "radar",
+        "surveillance",
+        "low_altitude",
+        "uhf",
+        "bronya"
+      ]
+    },
+    {
+      "id": "radar_5n84a_oborona14",
+      "canonical_name": "5Н84А «Оборона-14» (П-14)",
+      "category": "radar_surveillance",
+      "sub_category": "РЛС дальнього виявлення метрового діапазону (VHF)",
+      "origin": "СРСР / Україна",
+      "range_class": "early_warning_surveillance",
+      "max_range_km": 600,
+      "max_altitude_km": 65,
+      "names": {
+        "uk": "5Н84А «Оборона-14» (П-14)",
+        "en": "5N84A Oborona-14 (P-14)",
+        "nato": "Tall King C",
+        "grau": "5Н84А"
+      },
+      "variations": [
+        "5Н84А",
+        "5N84A",
+        "5Н84",
+        "5N84",
+        "Оборона-14",
+        "Оборона 14",
+        "Оборона",
+        "Oborona-14",
+        "Oborona 14",
+        "П-14",
+        "П14",
+        "P-14",
+        "P14",
+        "П-14Ф",
+        "Tall King",
+        "Tall King C",
+        "TallKing",
+        "РЛС Оборона-14",
+        "РЛС 5Н84А",
+        "радар Оборона-14",
+        "5Н84АМА",
+        "5N84AMA"
+      ],
+      "tags": [
+        "radar",
+        "early_warning",
+        "long_range",
+        "vhf",
+        "oborona"
+      ]
+    },
+    {
+      "id": "radar_p37_mech",
+      "canonical_name": "П-37 «Меч» / 1РЛ139",
+      "category": "radar_surveillance",
+      "sub_category": "Оглядова радіолокаційна станція виявлення повітряних цілей (S-band)",
+      "origin": "СРСР / Україна",
+      "range_class": "early_warning_surveillance",
+      "max_range_km": 350,
+      "max_altitude_km": 28,
+      "names": {
+        "uk": "П-37 «Меч» (1РЛ139)",
+        "en": "P-37 Mech (1RL139)",
+        "nato": "Bar Lock",
+        "grau": "1РЛ139"
+      },
+      "variations": [
+        "П-37",
+        "П37",
+        "P-37",
+        "P37",
+        "1РЛ139",
+        "1RL139",
+        "Меч",
+        "П-37 Меч",
+        "P-37 Mech",
+        "Bar Lock",
+        "BarLock",
+        "РЛС П-37",
+        "радар П-37",
+        "станція П-37"
+      ],
+      "tags": [
+        "radar",
+        "surveillance",
+        "p37",
+        "bar_lock"
+      ]
+    },
+    {
+      "id": "radar_p15_tropa",
+      "canonical_name": "П-15 «Тропа» / 1РЛ114",
+      "category": "radar_surveillance",
+      "sub_category": "Маловисотна 2D оглядова РЛС",
+      "origin": "СРСР / Україна",
+      "range_class": "low_altitude_surveillance",
+      "max_range_km": 150,
+      "max_altitude_km": 6,
+      "names": {
+        "uk": "П-15 «Тропа» (1РЛ114)",
+        "en": "P-15 Tropa (1RL114)",
+        "nato": "Flat Face A",
+        "grau": "1РЛ114"
+      },
+      "variations": [
+        "П-15",
+        "П15",
+        "P-15",
+        "P15",
+        "1РЛ114",
+        "1RL114",
+        "Тропа",
+        "П-15 Тропа",
+        "P-15 Tropa",
+        "Flat Face A",
+        "РЛС П-15",
+        "радар П-15"
+      ],
+      "tags": [
+        "radar",
+        "low_altitude",
+        "p15",
+        "flat_face"
+      ]
+    },
+    {
+      "id": "radar_rsp_10_landing",
+      "canonical_name": "РСП-10МН / РСП-6М2",
+      "category": "radar_surveillance",
+      "sub_category": "Радіолокаційна система посадки літаків та контролю ближньої зони летовищ",
+      "origin": "СРСР / Україна",
+      "range_class": "airfield_approach_radar",
+      "max_range_km": 120,
+      "max_altitude_km": 10,
+      "names": {
+        "uk": "РСП-10МН / РСП-6М2 (посадкова РЛС)",
+        "en": "RSP-10MN / RSP-6M2 Radar Landing System",
+        "nato": "Two Spot",
+        "grau": "РСП-10"
+      },
+      "variations": [
+        "РСП-10",
+        "РСП10",
+        "РСП-10М",
+        "РСП-10МН",
+        "RSP-10",
+        "РСП-6",
+        "РСП-6М2",
+        "RSP-6",
+        "посадкова РЛС",
+        "система посадки РСП",
+        "РЛС РСП-10"
+      ],
+      "tags": [
+        "radar",
+        "airfield",
+        "landing",
+        "rsp10"
+      ]
+    },
+    {
+      "id": "radar_36d6_st68u",
+      "canonical_name": "36Д6 / СТ-68У (19Ж6, 35Д6)",
+      "category": "radar_surveillance",
+      "sub_category": "Мобільна 3D РЛС виявлення маловисотних цілей (S-band)",
+      "origin": "Україна (НВК «Іскра») / СРСР",
+      "range_class": "surveillance_3d",
+      "max_range_km": 360,
+      "max_altitude_km": 30,
+      "names": {
+        "uk": "36Д6 / СТ-68У / 19Ж6",
+        "en": "36D6 / ST-68U / 19Zh6",
+        "nato": "Tin Shield",
+        "grau": "19Ж6 / 35Д6 / 36Д6"
+      },
+      "variations": [
+        "36Д6",
+        "36D6",
+        "36-Д6",
+        "36-D6",
+        "36Д6М",
+        "36D6M",
+        "36Д6М1-1",
+        "36D6M1-1",
+        "36Д6М1-2",
+        "36D6M1-2",
+        "СТ-68У",
+        "СТ68У",
+        "ST-68U",
+        "ST68U",
+        "СТ-68УМ",
+        "19Ж6",
+        "19Zh6",
+        "19-Ж6",
+        "35Д6",
+        "35D6",
+        "Tin Shield",
+        "TinShield",
+        "Tin Shield B",
+        "РЛС 36Д6",
+        "РЛС СТ-68У",
+        "РЛС 19Ж6",
+        "радар 36Д6",
+        "Іскра 36Д6",
+        "Нива",
+        "РЛС Нива"
+      ],
+      "tags": [
+        "radar",
+        "3d_radar",
+        "iskra",
+        "tin_shield",
+        "s_band",
+        "low_altitude"
+      ]
+    },
+    {
+      "id": "radar_79k6_pelikan",
+      "canonical_name": "79К6 «Пелікан»",
+      "category": "radar_surveillance",
+      "sub_category": "Трьохкоординатна РЛС кругового огляду (S-band)",
+      "origin": "Україна (НВК «Іскра»)",
+      "range_class": "surveillance_3d",
+      "max_range_km": 400,
+      "max_altitude_km": 40,
+      "names": {
+        "uk": "79К6 «Пелікан»",
+        "en": "79K6 Pelican",
+        "nato": "Pelican",
+        "grau": "79К6"
+      },
+      "variations": [
+        "79К6",
+        "79K6",
+        "79-К6",
+        "79-K6",
+        "Пелікан",
+        "Pelican",
+        "79К6 Пелікан",
+        "79K6 Pelican",
+        "79К6 «Пелікан»",
+        "РЛС Пелікан",
+        "РЛС 79К6",
+        "радар Пелікан",
+        "радар 79К6",
+        "Іскра 79К6",
+        "Пеликан",
+        "Pelikan"
+      ],
+      "tags": [
+        "radar",
+        "3d_radar",
+        "pelikan",
+        "iskra",
+        "ukraine",
+        "s_band"
+      ]
+    },
+    {
+      "id": "radar_80k6_phoenix",
+      "canonical_name": "80К6 / 80К6Т / 80К6КС1 «Фенікс-1»",
+      "category": "radar_surveillance",
+      "sub_category": "Мобільна 3D РЛС на базі твердотільної ЦАР / AESA",
+      "origin": "Україна (НВК «Іскра»)",
+      "range_class": "surveillance_3d",
+      "max_range_km": 500,
+      "max_altitude_km": 40,
+      "names": {
+        "uk": "80К6 / 80К6КС1 «Фенікс-1»",
+        "en": "80K6 / 80K6KS1 Phoenix-1",
+        "nato": "Phoenix",
+        "grau": "80К6"
+      },
+      "variations": [
+        "80К6",
+        "80K6",
+        "80-К6",
+        "80-K6",
+        "80К6Т",
+        "80K6T",
+        "80К6К1",
+        "80K6K1",
+        "80К6КС1",
+        "80K6KS1",
+        "Фенікс",
+        "Фенікс-1",
+        "Phoenix",
+        "Phoenix-1",
+        "80К6КС1 «Фенікс-1»",
+        "80К6 Фенікс",
+        "РЛС Фенікс",
+        "РЛС Фенікс-1",
+        "радар Фенікс",
+        "РЛС 80К6",
+        "радар 80К6",
+        "Феникс",
+        "Феникс-1",
+        "80К6М",
+        "80K6M"
+      ],
+      "tags": [
+        "radar",
+        "3d_radar",
+        "phoenix",
+        "aesa",
+        "iskra",
+        "ukraine"
+      ]
+    },
+    {
+      "id": "radar_kolchuga_m",
+      "canonical_name": "«Кольчуга» / «Кольчуга-М»",
+      "category": "radar_surveillance",
+      "sub_category": "Автоматизована станція пасивної радіотехнічної розвідки (РТР)",
+      "origin": "Україна (Топаз)",
+      "range_class": "passive_esm_surveillance",
+      "max_range_km": 600,
+      "max_altitude_km": 40,
+      "names": {
+        "uk": "Кольчуга-М",
+        "en": "Kolchuga-M",
+        "nato": "Kolchuga",
+        "grau": "1РЛ232 (комплекс)"
+      },
+      "variations": [
+        "Кольчуга",
+        "Кольчуга-М",
+        "Кольчуга М",
+        "Кольчуги",
+        "станція Кольчуга",
+        "РТР Кольчуга",
+        "Kolchuga",
+        "Kolchuga-M",
+        "Kolchuga M",
+        "Kolchuga ESM",
+        "Кольчуга-РТР",
+        "пасивна РЛС Кольчуга",
+        "комплекс Кольчуга",
+        "станція радіотехнічної розвідки Кольчуга",
+        "пасивний радар Кольчуга"
+      ],
+      "tags": [
+        "radar",
+        "passive_radar",
+        "esm",
+        "rtr",
+        "kolchuga",
+        "ukraine"
+      ]
+    },
+    {
+      "id": "radar_plastun_3d",
+      "canonical_name": "«Пластун» / «Пластун-3Д» (РТР/РЕР)",
+      "category": "radar_surveillance",
+      "sub_category": "Тактичний комплекс радіотехнічної розвідки та пеленгації",
+      "origin": "Україна (НВЦ «Інфозахист»)",
+      "range_class": "tactical_esm",
+      "max_range_km": 30,
+      "max_altitude_km": 10,
+      "names": {
+        "uk": "Пластун-3Д (Пластун-РП-3000)",
+        "en": "Plastun-3D (Plastun-RP-3000)",
+        "nato": "Plastun",
+        "grau": "Пластун-3Д"
+      },
+      "variations": [
+        "Пластун",
+        "Пластун-3Д",
+        "Пластун 3Д",
+        "Пластун-РП-3000",
+        "Пластун РП 3000",
+        "Plastun",
+        "Plastun-3D",
+        "Plastun 3D",
+        "Plastun-RP-3000",
+        "РТР Пластун",
+        "пеленгатор Пластун",
+        "комплекс Пластун",
+        "Інфозахист Пластун"
+      ],
+      "tags": [
+        "rtr",
+        "rer",
+        "esm",
+        "plastun",
+        "ukraine"
+      ]
+    },
+    {
+      "id": "radar_mineral_u",
+      "canonical_name": "«Мінерал-У»",
+      "category": "radar_surveillance",
+      "sub_category": "Мобільний радіолокаційний комплекс морського та надводного огляду (для РК-360МЦ «Нептун»)",
+      "origin": "Україна (ДП «НДІРВ Квант-Радіолокація»)",
+      "range_class": "coastal_surveillance",
+      "max_range_km": 450,
+      "max_altitude_km": 5,
+      "names": {
+        "uk": "Мінерал-У",
+        "en": "Mineral-U",
+        "nato": "Band Stand derivative",
+        "grau": "Мінерал-У"
+      },
+      "variations": [
+        "Мінерал-У",
+        "Мінерал У",
+        "Минерал-У",
+        "Минерал У",
+        "Mineral-U",
+        "Mineral U",
+        "Mineral-У",
+        "РЛС Мінерал-У",
+        "радар Мінерал-У",
+        "радар Нептуна",
+        "РЛС комплексу Нептун"
+      ],
+      "tags": [
+        "radar",
+        "coastal",
+        "neptune",
+        "mineral_u",
+        "ukraine"
+      ]
+    },
+    {
+      "id": "radar_trml_4d",
+      "canonical_name": "Hensoldt TRML-4D",
+      "category": "radar_surveillance",
+      "sub_category": "Мобільна 3D багатофункціональна C-band AESA РЛС (до ЗРК IRIS-T SLM)",
+      "origin": "Німеччина (Hensoldt)",
+      "range_class": "surveillance_3d_aesa",
+      "max_range_km": 250,
+      "max_altitude_km": 30,
+      "names": {
+        "uk": "TRML-4D (Хенсольдт)",
+        "en": "Hensoldt TRML-4D",
+        "nato": "TRML-4D",
+        "grau": "N/A"
+      },
+      "variations": [
+        "TRML-4D",
+        "TRML 4D",
+        "TRML4D",
+        "TRML-4",
+        "TRML4",
+        "Hensoldt TRML-4D",
+        "Hensoldt TRML4D",
+        "ТРМЛ-4Д",
+        "ТРМЛ 4Д",
+        "ТРМЛ4Д",
+        "ТРМЛ",
+        "Хенсольдт TRML-4D",
+        "радар TRML-4D",
+        "РЛС TRML-4D",
+        "радар IRIS-T",
+        "радар Іріс-Т",
+        "радар Ірис-Т",
+        "РЛС ТРМЛ",
+        "Hensoldt radar",
+        "TRML"
+      ],
+      "tags": [
+        "radar",
+        "aesa",
+        "iris_t",
+        "hensoldt",
+        "germany",
+        "c_band"
+      ]
+    },
+    {
+      "id": "radar_an_mpq_64_sentinel",
+      "canonical_name": "Raytheon AN/MPQ-64 Sentinel (F1)",
+      "category": "radar_surveillance",
+      "sub_category": "3D X-band фазована РЛС ППО малої/середньої дальності (до NASAMS / SHORAD)",
+      "origin": "США (Raytheon)",
+      "range_class": "surveillance_3d_shorad",
+      "max_range_km": 75,
+      "max_altitude_km": 12,
+      "names": {
+        "uk": "AN/MPQ-64 Sentinel («Сентинел»)",
+        "en": "AN/MPQ-64 Sentinel (AN/MPQ-64F1)",
+        "nato": "Sentinel",
+        "grau": "AN/MPQ-64"
+      },
+      "variations": [
+        "AN/MPQ-64",
+        "AN/MPQ-64 Sentinel",
+        "AN/MPQ-64F1",
+        "MPQ-64",
+        "MPQ64",
+        "MPQ-64F1",
+        "Sentinel",
+        "Sentinel radar",
+        "Сентинел",
+        "Сентінел",
+        "Сентінель",
+        "радар Sentinel",
+        "РЛС Sentinel",
+        "радар Сентинел",
+        "РЛС Сентинел",
+        "АН/МПК-64",
+        "АН/МПВ-64",
+        "радар NASAMS",
+        "радар Насамс",
+        "РЛС NASAMS",
+        "Raytheon Sentinel",
+        "AN-MPQ-64"
+      ],
+      "tags": [
+        "radar",
+        "3d_radar",
+        "sentinel",
+        "nasams",
+        "shorad",
+        "usa",
+        "raytheon",
+        "x_band"
+      ]
+    },
+    {
+      "id": "radar_thales_ground_master_200",
+      "canonical_name": "Thales Ground Master 200 (GM200)",
+      "category": "radar_surveillance",
+      "sub_category": "Мобільна 3D S-band AESA РЛС виявлення повітряних цілей та БпЛА",
+      "origin": "Франція (Thales)",
+      "range_class": "surveillance_3d_aesa",
+      "max_range_km": 250,
+      "max_altitude_km": 24,
+      "names": {
+        "uk": "Thales Ground Master 200 (GM200)",
+        "en": "Thales Ground Master 200 (GM200 MM/C)",
+        "nato": "Ground Master 200",
+        "grau": "N/A"
+      },
+      "variations": [
+        "Ground Master 200",
+        "Ground Master",
+        "GM200",
+        "GM 200",
+        "GM-200",
+        "GM200 MM/C",
+        "GM200 MMC",
+        "Граунд Мастер 200",
+        "Граунд Майстер 200",
+        "Граунд Мастер",
+        "ГМ200",
+        "ГМ 200",
+        "ГМ-200",
+        "Thales GM200",
+        "радар GM200",
+        "РЛС GM200",
+        "радар Ground Master",
+        "РЛС Ground Master 200",
+        "Thales Ground Master",
+        "GM-200 MM/C"
+      ],
+      "tags": [
+        "radar",
+        "aesa",
+        "thales",
+        "france",
+        "gm200",
+        "c_uas",
+        "s_band"
+      ]
+    },
+    {
+      "id": "radar_thales_ground_master_400",
+      "canonical_name": "Thales Ground Master 400 (GM400 / GM400 Alpha)",
+      "category": "radar_surveillance",
+      "sub_category": "Стаціонарна/мобільна 3D S-band AESA РЛС дальнього огляду",
+      "origin": "Франція (Thales)",
+      "range_class": "surveillance_3d_long_range",
+      "max_range_km": 470,
+      "max_altitude_km": 30,
+      "names": {
+        "uk": "Thales Ground Master 400 (GM400)",
+        "en": "Thales Ground Master 400 (GM400 Alpha)",
+        "nato": "Ground Master 400",
+        "grau": "N/A"
+      },
+      "variations": [
+        "Ground Master 400",
+        "GM400",
+        "GM 400",
+        "GM-400",
+        "GM400 Alpha",
+        "Граунд Мастер 400",
+        "ГМ400",
+        "ГМ 400",
+        "Thales GM400",
+        "радар GM400",
+        "РЛС GM400",
+        "Thales Ground Master 400"
+      ],
+      "tags": [
+        "radar",
+        "long_range",
+        "thales",
+        "france",
+        "gm400",
+        "aesa"
+      ]
+    },
+    {
+      "id": "radar_saab_giraffe_amb",
+      "canonical_name": "Saab Giraffe AMB / Giraffe 75",
+      "category": "radar_surveillance",
+      "sub_category": "Мобільна 3D багатопроменева РЛС ППО на щоглі (C-band)",
+      "origin": "Швеція (Saab)",
+      "range_class": "surveillance_3d",
+      "max_range_km": 120,
+      "max_altitude_km": 20,
+      "names": {
+        "uk": "Saab Giraffe AMB («Жираф»)",
+        "en": "Saab Giraffe AMB / Giraffe 75",
+        "nato": "Giraffe",
+        "grau": "N/A"
+      },
+      "variations": [
+        "Giraffe AMB",
+        "Giraffe",
+        "Giraffe 75",
+        "Giraffe 50",
+        "Giraffe 40",
+        "Saab Giraffe",
+        "Жираф",
+        "Жирафф",
+        "Джираф",
+        "радар Жираф",
+        "РЛС Жираф",
+        "радар Giraffe",
+        "РЛС Giraffe AMB",
+        "Жираф АМБ",
+        "шведський Жираф",
+        "Saab Giraffe AMB"
+      ],
+      "tags": [
+        "radar",
+        "saab",
+        "sweden",
+        "giraffe",
+        "c_band",
+        "mast_mounted"
+      ]
+    },
+    {
+      "id": "radar_hensoldt_twinvis",
+      "canonical_name": "Hensoldt Twinvis",
+      "category": "radar_surveillance",
+      "sub_category": "Пасивна когерентна РЛС (PCL — не випромінює радіосигналів)",
+      "origin": "Німеччина (Hensoldt)",
+      "range_class": "passive_coherent_radar",
+      "max_range_km": 250,
+      "max_altitude_km": 20,
+      "names": {
+        "uk": "Hensoldt Twinvis (пасивний радар)",
+        "en": "Hensoldt Twinvis Passive Radar",
+        "nato": "Twinvis",
+        "grau": "N/A"
+      },
+      "variations": [
+        "Twinvis",
+        "Твінвіс",
+        "Твинвис",
+        "Hensoldt Twinvis",
+        "пасивний радар Twinvis",
+        "РЛС Twinvis",
+        "радар Твінвіс",
+        "Хенсольдт Твінвіс",
+        "пасивна РЛС Twinvis"
+      ],
+      "tags": [
+        "radar",
+        "passive_radar",
+        "stealth_detection",
+        "hensoldt",
+        "germany"
+      ]
+    },
+    {
+      "id": "radar_robin_iris_max",
+      "canonical_name": "Robin Radar Systems (IRIS / MAX / ELVIRA)",
+      "category": "radar_surveillance",
+      "sub_category": "Спеціалізовані мікродоплерівські 3D радари детекції мікро- та міні-БпЛА",
+      "origin": "Нідерланди (Robin Radar Systems)",
+      "range_class": "drone_detection_c_uas",
+      "max_range_km": 10,
+      "max_altitude_km": 3,
+      "names": {
+        "uk": "Robin Radar IRIS / MAX",
+        "en": "Robin Radar Systems (IRIS, MAX, ELVIRA)",
+        "nato": "Robin Radar",
+        "grau": "N/A"
+      },
+      "variations": [
+        "Robin Radar",
+        "Robin Radar IRIS",
+        "Robin IRIS",
+        "Робин радар",
+        "Робін радар",
+        "РЛС Robin",
+        "Robin MAX",
+        "Robin ELVIRA",
+        "радар детекції дронів Robin",
+        "радар IRIS від Robin",
+        "ELVIRA radar"
+      ],
+      "tags": [
+        "radar",
+        "c_uas",
+        "drone_detection",
+        "netherlands",
+        "robin_radar"
+      ]
+    },
+    {
+      "id": "radar_rada_iemhr_rps",
+      "canonical_name": "RADA ieMHR / RPS-42 / RPS-82",
+      "category": "radar_tactical",
+      "sub_category": "Тактична напівсферична AESA РЛС виявлення дронів, мінометів та ракет",
+      "origin": "Ізраїль / США (RADA Electronic Industries / Leonardo DRS)",
+      "range_class": "tactical_hemispheric_aesa",
+      "max_range_km": 30,
+      "max_altitude_km": 10,
+      "names": {
+        "uk": "RADA ieMHR / RPS-42",
+        "en": "RADA ieMHR / RPS-42 / RPS-82",
+        "nato": "ieMHR",
+        "grau": "N/A"
+      },
+      "variations": [
+        "RADA",
+        "RADA ieMHR",
+        "ieMHR",
+        "MHR",
+        "RPS-42",
+        "RPS42",
+        "RPS-82",
+        "RPS82",
+        "RPS-72",
+        "РАДА",
+        "іеМХР",
+        "РПС-42",
+        "РПС 42",
+        "РПС-82",
+        "радар Рада",
+        "радар RADA",
+        "RADA radar",
+        "DRS RADA",
+        "ізраїльський радар RADA",
+        "радар виявлення дронів RADA",
+        "RADA Electronic",
+        "RPS 42 radar",
+        "MHR radar"
+      ],
+      "tags": [
+        "tactical_radar",
+        "aesa",
+        "c_uas",
+        "c_ram",
+        "israel",
+        "rada",
+        "iemhr"
+      ]
+    },
+    {
+      "id": "radar_hensoldt_spexer_2000",
+      "canonical_name": "Hensoldt Spexer 2000 3D",
+      "category": "radar_tactical",
+      "sub_category": "Тактична AESA РЛС спостереження за поверхнею та повітрям малої висоти",
+      "origin": "Німеччина (Hensoldt)",
+      "range_class": "tactical_aesa",
+      "max_range_km": 40,
+      "max_altitude_km": 5,
+      "names": {
+        "uk": "Hensoldt Spexer 2000 3D",
+        "en": "Hensoldt Spexer 2000 3D",
+        "nato": "Spexer",
+        "grau": "N/A"
+      },
+      "variations": [
+        "Spexer 2000",
+        "Spexer 2000 3D",
+        "Spexer",
+        "Спексер",
+        "Спексер 2000",
+        "Hensoldt Spexer",
+        "Spexer-2000",
+        "радар Spexer",
+        "РЛС Спексер",
+        "Spexer radar",
+        "Spexer 2000 3D radar"
+      ],
+      "tags": [
+        "tactical_radar",
+        "c_uas",
+        "hensoldt",
+        "spexer",
+        "germany"
+      ]
+    },
+    {
+      "id": "radar_saab_giraffe_1x",
+      "canonical_name": "Saab Giraffe 1X",
+      "category": "radar_tactical",
+      "sub_category": "Ультралегка 3D AESA РЛС X-band для C-UAS та мобільних систем ППО",
+      "origin": "Швеція (Saab)",
+      "range_class": "tactical_aesa_vshorad",
+      "max_range_km": 75,
+      "max_altitude_km": 10,
+      "names": {
+        "uk": "Saab Giraffe 1X («Жираф 1Х»)",
+        "en": "Saab Giraffe 1X",
+        "nato": "Giraffe 1X",
+        "grau": "N/A"
+      },
+      "variations": [
+        "Giraffe 1X",
+        "Giraffe-1X",
+        "Giraffe 1-X",
+        "G1X",
+        "Жираф 1Х",
+        "Жираф 1X",
+        "Жираф-1Х",
+        "Saab Giraffe 1X",
+        "радар Жираф 1Х",
+        "РЛС Giraffe 1X",
+        "легкий Жираф"
+      ],
+      "tags": [
+        "tactical_radar",
+        "aesa",
+        "c_uas",
+        "vshorad",
+        "sweden",
+        "saab",
+        "x_band"
+      ]
+    },
+    {
+      "id": "radar_oerlikon_xtar3d",
+      "canonical_name": "Oerlikon X-TAR3D",
+      "category": "radar_tactical",
+      "sub_category": "Тактична 3D X-band РЛС пошуку та супроводу (входить до складу Skynex)",
+      "origin": "Німеччина / Швейцарія / Італія (Rheinmetall Italia)",
+      "range_class": "tactical_shorad_radar",
+      "max_range_km": 50,
+      "max_altitude_km": 10,
+      "names": {
+        "uk": "Oerlikon X-TAR3D",
+        "en": "Oerlikon X-TAR3D",
+        "nato": "X-TAR3D",
+        "grau": "N/A"
+      },
+      "variations": [
+        "X-TAR3D",
+        "X-TAR 3D",
+        "XTAR3D",
+        "XTAR-3D",
+        "X-TAR",
+        "радар Skynex",
+        "радар Скайнекс",
+        "РЛС X-TAR3D",
+        "радар XTAR",
+        "Oerlikon X-TAR3D",
+        "Rheinmetall X-TAR3D"
+      ],
+      "tags": [
+        "tactical_radar",
+        "skynex",
+        "rheinmetall",
+        "x_band",
+        "c_uas"
+      ]
+    },
+    {
+      "id": "radar_an_tpq_36_firefinder",
+      "canonical_name": "Hughes/Northrop AN/TPQ-36 Firefinder",
+      "category": "radar_tactical",
+      "sub_category": "Мобільна контрбатарейна РЛС виявлення артилерії, мінометів та РСЗВ",
+      "origin": "США (Hughes / Northrop Grumman)",
+      "range_class": "counter_battery",
+      "max_range_km": 24,
+      "max_altitude_km": 8,
+      "names": {
+        "uk": "AN/TPQ-36 Firefinder («Фаєрфайндер»)",
+        "en": "AN/TPQ-36 Firefinder",
+        "nato": "Firefinder",
+        "grau": "AN/TPQ-36"
+      },
+      "variations": [
+        "AN/TPQ-36",
+        "AN/TPQ-36 Firefinder",
+        "TPQ-36",
+        "TPQ36",
+        "AN-TPQ-36",
+        "ТПК-36",
+        "ТПК 36",
+        "ТПКу-36",
+        "Фаєрфайндер",
+        "Файрфайндер",
+        "Firefinder",
+        "контрбатарейна РЛС AN/TPQ-36",
+        "радар TPQ-36",
+        "РЛС ТПК-36",
+        "радар Фаєрфайндер"
+      ],
+      "tags": [
+        "tactical_radar",
+        "counter_battery",
+        "firefinder",
+        "usa",
+        "tpq36"
+      ]
+    },
+    {
+      "id": "radar_an_tpq_37_firefinder",
+      "canonical_name": "Hughes AN/TPQ-37 Firefinder",
+      "category": "radar_tactical",
+      "sub_category": "Далекобійна контрбатарейна РЛС виявлення артилерії та РСЗВ",
+      "origin": "США (Hughes / ThalesRaytheonSystems)",
+      "range_class": "counter_battery_long_range",
+      "max_range_km": 50,
+      "max_altitude_km": 12,
+      "names": {
+        "uk": "AN/TPQ-37 Firefinder",
+        "en": "AN/TPQ-37 Firefinder",
+        "nato": "Firefinder",
+        "grau": "AN/TPQ-37"
+      },
+      "variations": [
+        "AN/TPQ-37",
+        "AN/TPQ-37 Firefinder",
+        "TPQ-37",
+        "TPQ37",
+        "AN-TPQ-37",
+        "ТПК-37",
+        "ТПК 37",
+        "радар TPQ-37",
+        "контрбатарейний радар TPQ-37"
+      ],
+      "tags": [
+        "tactical_radar",
+        "counter_battery",
+        "firefinder",
+        "usa",
+        "tpq37"
+      ]
+    },
+    {
+      "id": "radar_an_tpq_48_49_50_lcmr",
+      "canonical_name": "SRC AN/TPQ-48 / AN/TPQ-49 / AN/TPQ-50 LCMR",
+      "category": "radar_tactical",
+      "sub_category": "Легка мобільна купольна контрмінометна РЛС кругового огляду 360°",
+      "origin": "США (SRC Inc.)",
+      "range_class": "counter_mortar_c_ram",
+      "max_range_km": 15,
+      "max_altitude_km": 5,
+      "names": {
+        "uk": "AN/TPQ-48 / 49 / 50 LCMR",
+        "en": "AN/TPQ-48 / AN/TPQ-49 / AN/TPQ-50 LCMR",
+        "nato": "LCMR",
+        "grau": "AN/TPQ-50"
+      },
+      "variations": [
+        "AN/TPQ-48",
+        "AN/TPQ-49",
+        "AN/TPQ-50",
+        "TPQ-48",
+        "TPQ-49",
+        "TPQ-50",
+        "TPQ48",
+        "TPQ49",
+        "TPQ50",
+        "AN-TPQ-48",
+        "AN-TPQ-49",
+        "AN-TPQ-50",
+        "ТПК-48",
+        "ТПК-49",
+        "ТПК-50",
+        "ТПК50",
+        "LCMR",
+        "Lightweight Counter-Mortar Radar",
+        "радар TPQ-50",
+        "радар TPQ-49",
+        "купольний радар TPQ",
+        "контрмінометна РЛС AN/TPQ-50",
+        "SRC LCMR"
+      ],
+      "tags": [
+        "tactical_radar",
+        "counter_mortar",
+        "c_ram",
+        "lcmr",
+        "usa",
+        "360_degree"
+      ]
+    },
+    {
+      "id": "radar_an_tpq_53_qrc",
+      "canonical_name": "Lockheed Martin AN/TPQ-53 QRC",
+      "category": "radar_tactical",
+      "sub_category": "Новітня контрбатарейна та C-RAM РЛС з активною фазованою решіткою (AESA S-band)",
+      "origin": "США (Lockheed Martin)",
+      "range_class": "counter_battery_aesa",
+      "max_range_km": 60,
+      "max_altitude_km": 15,
+      "names": {
+        "uk": "AN/TPQ-53 QRC («ТПК-53»)",
+        "en": "Lockheed Martin AN/TPQ-53 Quick Reaction Capability Radar",
+        "nato": "TPQ-53",
+        "grau": "AN/TPQ-53"
+      },
+      "variations": [
+        "AN/TPQ-53",
+        "TPQ-53",
+        "TPQ53",
+        "AN-TPQ-53",
+        "ТПК-53",
+        "ТПК 53",
+        "Lockheed AN/TPQ-53",
+        "радар TPQ-53",
+        "РЛС TPQ-53",
+        "QRC radar"
+      ],
+      "tags": [
+        "tactical_radar",
+        "counter_battery",
+        "aesa",
+        "usa",
+        "lockheed"
+      ]
+    },
+    {
+      "id": "radar_cobra",
+      "canonical_name": "Euro-ART COBRA",
+      "category": "radar_tactical",
+      "sub_category": "Високоточна контрбатарейна РЛС виявлення артилерійських позицій (C-band AESA)",
+      "origin": "Німеччина / Франція / Велика Британія (Euro-ART, Hensoldt, Thales, Lockheed Martin)",
+      "range_class": "counter_battery_advanced",
+      "max_range_km": 100,
+      "max_altitude_km": 15,
+      "names": {
+        "uk": "COBRA (контрбатарейна РЛС «Кобра»)",
+        "en": "Euro-ART COBRA (Counter Battery Radar)",
+        "nato": "COBRA",
+        "grau": "N/A"
+      },
+      "variations": [
+        "COBRA",
+        "COBRA radar",
+        "Кобра",
+        "радар Кобра",
+        "РЛС Кобра",
+        "контрбатарейна РЛС COBRA",
+        "Euro-ART COBRA",
+        "COBRA Counter Battery Radar",
+        "німецька Кобра",
+        "РЛС COBRA"
+      ],
+      "tags": [
+        "tactical_radar",
+        "counter_battery",
+        "cobra",
+        "euroart",
+        "aesa"
+      ]
+    },
+    {
+      "id": "radar_arthur_mamba",
+      "canonical_name": "Saab ARTHUR / MAMBA",
+      "category": "radar_tactical",
+      "sub_category": "Мобільна контрбатарейна РЛС виявлення артилерії (C-band)",
+      "origin": "Швеція / Норвегія (Saab / Ericsson)",
+      "range_class": "counter_battery",
+      "max_range_km": 40,
+      "max_altitude_km": 10,
+      "names": {
+        "uk": "Saab ARTHUR / MAMBA («Артур» / «Мамба»)",
+        "en": "Saab ARTHUR (Artillery Hunting Radar) / MAMBA",
+        "nato": "ARTHUR / MAMBA",
+        "grau": "N/A"
+      },
+      "variations": [
+        "ARTHUR",
+        "MAMBA",
+        "Артур",
+        "Мамба",
+        "Saab ARTHUR",
+        "ARTHUR radar",
+        "радар Артур",
+        "РЛС Артур",
+        "РЛС MAMBA",
+        "контрбатарейна РЛС ARTHUR",
+        "Artillery Hunting Radar",
+        "Mamba radar"
+      ],
+      "tags": [
+        "tactical_radar",
+        "counter_battery",
+        "arthur",
+        "mamba",
+        "saab",
+        "sweden"
+      ]
+    },
+    {
+      "id": "radar_1l220u_zoopark_2",
+      "canonical_name": "1Л220У «Зоопарк-2»",
+      "category": "radar_tactical",
+      "sub_category": "Радіолокаційний артилерійський розвідувальний комплекс (контрбатарейна РЛС)",
+      "origin": "Україна (НВК «Іскра»)",
+      "range_class": "counter_battery",
+      "max_range_km": 50,
+      "max_altitude_km": 12,
+      "names": {
+        "uk": "1Л220У «Зоопарк-2»",
+        "en": "1L220U Zoopark-2",
+        "nato": "Zoopark-2",
+        "grau": "1Л220У"
+      },
+      "variations": [
+        "1Л220У",
+        "1Л220",
+        "1L220U",
+        "1L220",
+        "Зоопарк-2",
+        "Зоопарк 2",
+        "Зоопарк",
+        "Zoopark-2",
+        "Zoopark 2",
+        "РЛС Зоопарк-2",
+        "радар Зоопарк-2",
+        "український Зоопарк",
+        "1Л220У-КС",
+        "1Л220У Зоопарк-2"
+      ],
+      "tags": [
+        "tactical_radar",
+        "counter_battery",
+        "zoopark",
+        "iskra",
+        "ukraine"
+      ]
+    },
+    {
+      "id": "radar_1l221e",
+      "canonical_name": "1Л221Е",
+      "category": "radar_tactical",
+      "sub_category": "Високомобільна контрбатарейна РЛС на колісному шасі 8х8",
+      "origin": "Україна (НВК «Іскра»)",
+      "range_class": "counter_battery_mobile",
+      "max_range_km": 50,
+      "max_altitude_km": 12,
+      "names": {
+        "uk": "1Л221Е (мобільний Зоопарк)",
+        "en": "1L221E mobile counter-battery radar",
+        "nato": "1L221E",
+        "grau": "1Л221Е"
+      },
+      "variations": [
+        "1Л221Е",
+        "1Л221",
+        "1L221E",
+        "1L221",
+        "радар 1Л221Е",
+        "РЛС 1Л221Е",
+        "мобільний Зоопарк",
+        "колісний Зоопарк"
+      ],
+      "tags": [
+        "tactical_radar",
+        "counter_battery",
+        "iskra",
+        "ukraine"
+      ]
+    },
+    {
+      "id": "radar_112l4_barsuk",
+      "canonical_name": "112L4 «Барсук» / «Барсук-А» / «Лис»",
+      "category": "radar_tactical",
+      "sub_category": "Портативна тактична РЛС ближньої розвідки людей, техніки та низьколітаючих БпЛА",
+      "origin": "Україна (ХК «Укрспецтехніка»)",
+      "range_class": "man_portable_tactical",
+      "max_range_km": 5,
+      "max_altitude_km": 1,
+      "names": {
+        "uk": "112L4 «Барсук» / «Лис»",
+        "en": "112L4 Barsuk / Badger / Lys",
+        "nato": "Barsuk",
+        "grau": "112L4"
+      },
+      "variations": [
+        "112L4",
+        "112Л4",
+        "Барсук",
+        "Барсук-А",
+        "Борсук",
+        "Badger radar",
+        "портативний радар Барсук",
+        "РЛС Барсук",
+        "радар Барсук",
+        "Лис",
+        "РЛС Лис",
+        "радар Лис",
+        "Fox radar",
+        "Укрспецтехніка Барсук"
+      ],
+      "tags": [
+        "tactical_radar",
+        "portable",
+        "ground_surveillance",
+        "drone_detection",
+        "ukraine"
+      ]
+    },
+    {
+      "id": "radar_biskvit_kb",
+      "canonical_name": "«Бісквіт-КБ»",
+      "category": "radar_tactical",
+      "sub_category": "Малогабаритна тактична РЛС виявлення дронів та мінометних позицій 360°",
+      "origin": "Україна (ТОВ «Скайстрім»)",
+      "range_class": "tactical_drone_mortar_radar",
+      "max_range_km": 10,
+      "max_altitude_km": 3,
+      "names": {
+        "uk": "Бісквіт-КБ (Скайстрім)",
+        "en": "Biskvit-KB (Skystream)",
+        "nato": "Biskvit",
+        "grau": "Бісквіт-КБ"
+      },
+      "variations": [
+        "Бісквіт-КБ",
+        "Бісквіт КБ",
+        "Бисквит-КБ",
+        "Бисквит КБ",
+        "Biskvit-KB",
+        "Biskvit KB",
+        "РЛС Бісквіт",
+        "радар Бісквіт",
+        "Скайстрім Бісквіт",
+        "радар Бісквіт-КБ"
+      ],
+      "tags": [
+        "tactical_radar",
+        "c_uas",
+        "mortar_detection",
+        "ukraine",
+        "skystream"
+      ]
+    },
+    {
+      "id": "radar_blighter_a400",
+      "canonical_name": "Blighter A400 / Revolution 360",
+      "category": "radar_tactical",
+      "sub_category": "Електронно-скануюча тактична РЛС виявлення БпЛА (у складі C-UAS систем AUDS)",
+      "origin": "Велика Британія (Blighter Surveillance Systems)",
+      "range_class": "tactical_c_uas",
+      "max_range_km": 15,
+      "max_altitude_km": 3,
+      "names": {
+        "uk": "Blighter A400 («Блайтер»)",
+        "en": "Blighter A400 / Revolution 360",
+        "nato": "Blighter",
+        "grau": "N/A"
+      },
+      "variations": [
+        "Blighter",
+        "Blighter A400",
+        "Blighter Revolution",
+        "Блайтер",
+        "радар Блайтер",
+        "AUDS radar",
+        "Blighter radar",
+        "РЛС Blighter"
+      ],
+      "tags": [
+        "tactical_radar",
+        "c_uas",
+        "blighter",
+        "uk",
+        "auds"
+      ]
+    },
+    {
+      "id": "radar_thales_squire",
+      "canonical_name": "Thales Squire",
+      "category": "radar_tactical",
+      "sub_category": "Портативна наземна тактична РЛС розвідки з малою ймовірністю перехоплення (LPI)",
+      "origin": "Франція / Нідерланди (Thales)",
+      "range_class": "portable_ground_surveillance",
+      "max_range_km": 24,
+      "max_altitude_km": 2,
+      "names": {
+        "uk": "Thales Squire («Сквайр»)",
+        "en": "Thales Squire Ground Surveillance Radar",
+        "nato": "Squire",
+        "grau": "N/A"
+      },
+      "variations": [
+        "Squire",
+        "Thales Squire",
+        "Сквайр",
+        "радар Сквайр",
+        "РЛС Squire",
+        "Squire radar",
+        "Thales Squire radar"
+      ],
+      "tags": [
+        "tactical_radar",
+        "portable",
+        "ground_surveillance",
+        "thales",
+        "lpi"
+      ]
+    },
+    {
+      "id": "radar_mstar_an_pps_5",
+      "canonical_name": "AN/PPS-5 MSTAR",
+      "category": "radar_tactical",
+      "sub_category": "Портативна тактична РЛС розвідки наземних цілей та повітряних об'єктів малої висоти",
+      "origin": "США / Велика Британія (DRS Technologies / Thorn EMI)",
+      "range_class": "man_portable_tactical",
+      "max_range_km": 35,
+      "max_altitude_km": 2,
+      "names": {
+        "uk": "AN/PPS-5 MSTAR",
+        "en": "AN/PPS-5 MSTAR",
+        "nato": "MSTAR",
+        "grau": "AN/PPS-5"
+      },
+      "variations": [
+        "MSTAR",
+        "AN/PPS-5",
+        "AN/PPS-5C",
+        "AN/PPS-5D",
+        "МСТАР",
+        "радар MSTAR",
+        "РЛС MSTAR",
+        "MSTAR radar",
+        "PPS-5"
+      ],
+      "tags": [
+        "tactical_radar",
+        "portable",
+        "ground_surveillance",
+        "usa"
+      ]
+    },
+    {
+      "id": "sensor_droneshield_rfpatrol",
+      "canonical_name": "DroneShield RfPatrol / DroneSentry",
+      "category": "radar_tactical",
+      "sub_category": "Носимі та стаціонарні сенсори радіочастотного пасивного пеленгування БпЛА",
+      "origin": "Австралія / США (DroneShield)",
+      "range_class": "tactical_rf_detection",
+      "max_range_km": 5,
+      "max_altitude_km": 2,
+      "names": {
+        "uk": "DroneShield RfPatrol / DroneSentry",
+        "en": "DroneShield RfPatrol / DroneSentry RF Detector",
+        "nato": "N/A",
+        "grau": "N/A"
+      },
+      "variations": [
+        "DroneShield",
+        "RfPatrol",
+        "DroneSentry",
+        "Дроншилд",
+        "РфПатрол",
+        "детектор дронів DroneShield",
+        "DroneShield RfPatrol Mk2",
+        "RfPatrol Mk2"
+      ],
+      "tags": [
+        "c_uas",
+        "rf_detector",
+        "droneshield",
+        "australia"
+      ]
+    },
+    {
+      "id": "uav_wild_hornets_interceptor",
+      "canonical_name": "«Дикі Шершні» (Wild Hornets Interceptor)",
+      "category": "interceptor_uav",
+      "sub_category": "Швидкісний зенітний FPV-перехоплювач розвідувальних БпЛА та Shahed-136",
+      "origin": "Україна (Дикі Шершні / Wild Hornets)",
+      "range_class": "fpv_interceptor",
+      "max_range_km": 25,
+      "max_altitude_km": 5,
+      "names": {
+        "uk": "Зенітний перехоплювач «Дикі Шершні»",
+        "en": "Wild Hornets Anti-Drone Interceptor",
+        "nato": "N/A",
+        "grau": "N/A"
+      },
+      "variations": [
+        "Дикі Шершні",
+        "Wild Hornets",
+        "перехоплювач Дикі Шершні",
+        "Wild Hornets Interceptor",
+        "анти-шахед FPV",
+        "антишахед FPV",
+        "зенітний FPV",
+        "зенітний дрон Wild Hornets",
+        "шершень-перехоплювач",
+        "дрон Дикі Шершні",
+        "Wild Hornets drone",
+        "зенітні Шершні",
+        "FPV проти шахедів",
+        "FPV проти розвідників"
+      ],
+      "tags": [
+        "interceptor_uav",
+        "fpv",
+        "wild_hornets",
+        "anti_shahed",
+        "anti_recon",
+        "ukraine"
+      ]
+    },
+    {
+      "id": "uav_tornado_interceptor",
+      "canonical_name": "«Торнадо» (Tornado Interceptor)",
+      "category": "interceptor_uav",
+      "sub_category": "Високошвидкісний зенітний FPV-дрон перехоплення повітряних цілей",
+      "origin": "Україна (Дикі Шершні)",
+      "range_class": "fpv_interceptor",
+      "max_range_km": 30,
+      "max_altitude_km": 6,
+      "names": {
+        "uk": "FPV-перехоплювач «Торнадо»",
+        "en": "Tornado High-Speed Interceptor Drone",
+        "nato": "N/A",
+        "grau": "N/A"
+      },
+      "variations": [
+        "Торнадо",
+        "Tornado",
+        "FPV Торнадо",
+        "перехоплювач Торнадо",
+        "Tornado Interceptor",
+        "дрон Торнадо",
+        "зенітний Торнадо",
+        "Tornado FPV",
+        "Торнадо Дикі Шершні"
+      ],
+      "tags": [
+        "interceptor_uav",
+        "fpv",
+        "high_speed",
+        "anti_shahed",
+        "ukraine"
+      ]
+    },
+    {
+      "id": "uav_dirk_interceptor",
+      "canonical_name": "«Дірк» (Dirk Interceptor)",
+      "category": "interceptor_uav",
+      "sub_category": "Спеціалізований FPV-дрон перехоплювач висотних розвідувальних крил",
+      "origin": "Україна",
+      "range_class": "fpv_interceptor",
+      "max_range_km": 20,
+      "max_altitude_km": 5,
+      "names": {
+        "uk": "Дрон-перехоплювач «Дірк»",
+        "en": "Dirk Interceptor Drone",
+        "nato": "N/A",
+        "grau": "N/A"
+      },
+      "variations": [
+        "Дірк",
+        "Dirk",
+        "дрон Дірк",
+        "перехоплювач Дірк",
+        "Dirk drone",
+        "Dirk interceptor",
+        "зенітний дрон Дірк",
+        "FPV Дірк"
+      ],
+      "tags": [
+        "interceptor_uav",
+        "fpv",
+        "anti_recon",
+        "ukraine"
+      ]
+    },
+    {
+      "id": "uav_bullet_jet_interceptor",
+      "canonical_name": "«Bullet» (реактивний джет-перехоплювач)",
+      "category": "interceptor_uav",
+      "sub_category": "Турбореактивний/швидкісний БпЛА-перехоплювач крилатих ракет та Shahed-136",
+      "origin": "Україна",
+      "range_class": "jet_interceptor",
+      "max_range_km": 60,
+      "max_altitude_km": 6,
+      "names": {
+        "uk": "Реактивний перехоплювач «Bullet» («Куля»)",
+        "en": "Bullet Jet-Powered Anti-Shahed Interceptor",
+        "nato": "N/A",
+        "grau": "N/A"
+      },
+      "variations": [
+        "Bullet",
+        "Буллет",
+        "Бюллет",
+        "дрон Bullet",
+        "реактивний перехоплювач Bullet",
+        "джет Bullet",
+        "Bullet interceptor",
+        "дрон Куля",
+        "Bullet jet drone",
+        "український реактивний дрон-перехоплювач"
+      ],
+      "tags": [
+        "interceptor_uav",
+        "jet_drone",
+        "anti_shahed",
+        "high_speed",
+        "ukraine"
+      ]
+    },
+    {
+      "id": "uav_fowler_interceptor",
+      "canonical_name": "«Fowler» (Фаулер)",
+      "category": "interceptor_uav",
+      "sub_category": "Компактний квадрокоптер-перехоплювач із системою самонаведення / сіткою",
+      "origin": "Україна",
+      "range_class": "c_uas_interceptor",
+      "max_range_km": 3,
+      "max_altitude_km": 1.5,
+      "names": {
+        "uk": "Дрон-перехоплювач Fowler («Фаулер»)",
+        "en": "Fowler Interceptor Drone",
+        "nato": "N/A",
+        "grau": "N/A"
+      },
+      "variations": [
+        "Fowler",
+        "Фаулер",
+        "дрон Fowler",
+        "перехоплювач Фаулер",
+        "Fowler interceptor",
+        "Fowler drone"
+      ],
+      "tags": [
+        "interceptor_uav",
+        "c_uas",
+        "drone_hunter",
+        "ukraine"
+      ]
+    },
+    {
+      "id": "uav_skyfall_interceptor",
+      "canonical_name": "«SkyFall»",
+      "category": "interceptor_uav",
+      "sub_category": "Зенітний перехоплювач БпЛА",
+      "origin": "Україна",
+      "range_class": "c_uas_interceptor",
+      "max_range_km": 15,
+      "max_altitude_km": 4,
+      "names": {
+        "uk": "Дрон-перехоплювач «SkyFall»",
+        "en": "SkyFall Interceptor Drone",
+        "nato": "N/A",
+        "grau": "N/A"
+      },
+      "variations": [
+        "SkyFall",
+        "Скайфол",
+        "Скайфолл",
+        "дрон SkyFall",
+        "перехоплювач SkyFall",
+        "SkyFall drone"
+      ],
+      "tags": [
+        "interceptor_uav",
+        "c_uas",
+        "ukraine"
+      ]
+    },
+    {
+      "id": "uav_bulava_pero_interceptor",
+      "canonical_name": "«Булава» / «Перо» (зенітні модифікації)",
+      "category": "interceptor_uav",
+      "sub_category": "Баражуючі боєприпаси та крилаті дрони з функціями перехоплення повітряних цілей",
+      "origin": "Україна (UAC)",
+      "range_class": "loitering_interceptor",
+      "max_range_km": 35,
+      "max_altitude_km": 4,
+      "names": {
+        "uk": "Дрон «Булава» / «Перо»",
+        "en": "Bulava / Pero Interceptor UAV",
+        "nato": "N/A",
+        "grau": "N/A"
+      },
+      "variations": [
+        "Булава",
+        "дрон Булава",
+        "перехоплювач Булава",
+        "Перо",
+        "дрон Перо",
+        "Bulava drone",
+        "Pero drone"
+      ],
+      "tags": [
+        "interceptor_uav",
+        "bulava",
+        "ukraine"
+      ]
+    },
+    {
+      "id": "uav_merida_interceptor",
+      "canonical_name": "«Merida» (зенітний дрон)",
+      "category": "interceptor_uav",
+      "sub_category": "Швидкісний дрон-перехоплювач",
+      "origin": "Україна",
+      "range_class": "fpv_interceptor",
+      "max_range_km": 20,
+      "max_altitude_km": 4,
+      "names": {
+        "uk": "Дрон «Merida»",
+        "en": "Merida Interceptor UAV",
+        "nato": "N/A",
+        "grau": "N/A"
+      },
+      "variations": [
+        "Merida",
+        "Меріда",
+        "дрон Merida",
+        "перехоплювач Merida"
+      ],
+      "tags": [
+        "interceptor_uav",
+        "merida",
+        "ukraine"
+      ]
+    },
+    {
+      "id": "uav_madyar_anti_recon_fpv",
+      "canonical_name": "Зенітні FPV підрозділу «Птахи Мадяра»",
+      "category": "interceptor_uav",
+      "sub_category": "Ударно-зенітні FPV комплекси перехоплення російських БпЛА (Zala, Orlan, Supercam)",
+      "origin": "Україна (414-й ОББпС «Птахи Мадяра»)",
+      "range_class": "fpv_interceptor",
+      "max_range_km": 25,
+      "max_altitude_km": 5,
+      "names": {
+        "uk": "Зенітні FPV «Птахи Мадяра»",
+        "en": "Madyar Birds Anti-Recon FPV Interceptor",
+        "nato": "N/A",
+        "grau": "N/A"
+      },
+      "variations": [
+        "Птахи Мадяра перехоплювач",
+        "зенітні FPV Мадяра",
+        "Madyar Birds Interceptor",
+        "FPV проти розвідників",
+        "мисливці за Орланами",
+        "зенітний FPV Мадяр",
+        "хробакоцидний перехоплювач"
+      ],
+      "tags": [
+        "interceptor_uav",
+        "fpv",
+        "madyar",
+        "anti_recon",
+        "ukraine"
+      ]
+    },
+    {
+      "id": "uav_signum_anti_recon_fpv",
+      "canonical_name": "Зенітні FPV підрозділу «Signum» (93 ОМБр)",
+      "category": "interceptor_uav",
+      "sub_category": "Спеціалізовані розрахунки FPV-перехоплювачів розвідкрил",
+      "origin": "Україна (Signum / 93-тя ОМБр «Холодний Яр»)",
+      "range_class": "fpv_interceptor",
+      "max_range_km": 25,
+      "max_altitude_km": 5,
+      "names": {
+        "uk": "Зенітні FPV «Signum» (93 ОМБр)",
+        "en": "Signum Unit Anti-Recon FPV",
+        "nato": "N/A",
+        "grau": "N/A"
+      },
+      "variations": [
+        "Signum перехоплювач",
+        "Сігнум перехоплювач",
+        "зенітні FPV Signum",
+        "FPV 93 ОМБр по розвідниках",
+        "Signum 93"
+      ],
+      "tags": [
+        "interceptor_uav",
+        "fpv",
+        "signum",
+        "93ombr",
+        "ukraine"
+      ]
+    },
+    {
+      "id": "uav_3oshbr_anti_recon_fpv",
+      "canonical_name": "Зенітні FPV 3-ї окремої штурмової бригади (3 ОШБр)",
+      "category": "interceptor_uav",
+      "sub_category": "FPV-перехоплювачі ворожих БпЛА",
+      "origin": "Україна (3 ОШБр)",
+      "range_class": "fpv_interceptor",
+      "max_range_km": 25,
+      "max_altitude_km": 5,
+      "names": {
+        "uk": "Зенітні FPV 3 ОШБр",
+        "en": "3rd Assault Brigade Anti-Recon FPV",
+        "nato": "N/A",
+        "grau": "N/A"
+      },
+      "variations": [
+        "3 ОШБр перехоплювач",
+        "зенітні FPV 3 ОШБр",
+        "перехоплювачі Третьої штурмової",
+        "3 ОШБр anti-drone"
+      ],
+      "tags": [
+        "interceptor_uav",
+        "fpv",
+        "3oshbr",
+        "ukraine"
+      ]
+    },
+    {
+      "id": "uav_11ak_anti_recon_fpv",
+      "canonical_name": "Зенітні FPV 11-го армійського корпусу",
+      "category": "interceptor_uav",
+      "sub_category": "Розрахунки зенітних FPV-перехоплювачів оперативно-тактичних дронів",
+      "origin": "Україна (11 АК)",
+      "range_class": "fpv_interceptor",
+      "max_range_km": 25,
+      "max_altitude_km": 5,
+      "names": {
+        "uk": "Зенітні FPV 11 АК",
+        "en": "11th Army Corps Anti-Recon FPV",
+        "nato": "N/A",
+        "grau": "N/A"
+      },
+      "variations": [
+        "11 АК перехоплювач",
+        "зенітні FPV 11 армійського корпусу",
+        "11 АК зенітний дрон"
+      ],
+      "tags": [
+        "interceptor_uav",
+        "fpv",
+        "11ak",
+        "ukraine"
+      ]
+    },
+    {
+      "id": "uav_fortem_dronehunter_f700",
+      "canonical_name": "Fortem DroneHunter F700",
+      "category": "interceptor_uav",
+      "sub_category": "Швидкісний дрон-перехоплювач із радаром TrueView та пневматичним сіткометом NetGun",
+      "origin": "США (Fortem Technologies)",
+      "range_class": "net_interceptor",
+      "max_range_km": 5,
+      "max_altitude_km": 2,
+      "names": {
+        "uk": "Fortem DroneHunter F700 («Дронхантер»)",
+        "en": "Fortem Technologies DroneHunter F700",
+        "nato": "DroneHunter",
+        "grau": "N/A"
+      },
+      "variations": [
+        "DroneHunter",
+        "DroneHunter F700",
+        "Дронхантер",
+        "Дрон Хантер",
+        "Фортем Дронхантер",
+        "Fortem F700",
+        "дрон з сіткою DroneHunter",
+        "Fortem Technologies DroneHunter",
+        "F700 DroneHunter"
+      ],
+      "tags": [
+        "interceptor_uav",
+        "c_uas",
+        "netgun",
+        "usa",
+        "fortem"
+      ]
+    },
+    {
+      "id": "uav_marss_interceptor",
+      "canonical_name": "MARSS Interceptor",
+      "category": "interceptor_uav",
+      "sub_category": "Автономний швидкісний БпЛА-перехоплювач із ШІ-наведенням для збиття дронів та крилатих ракет",
+      "origin": "Велика Британія / Монако (MARSS)",
+      "range_class": "ai_c_uas_interceptor",
+      "max_range_km": 15,
+      "max_altitude_km": 4,
+      "names": {
+        "uk": "MARSS Interceptor",
+        "en": "MARSS Autonomous Interceptor Drone",
+        "nato": "N/A",
+        "grau": "N/A"
+      },
+      "variations": [
+        "MARSS",
+        "MARSS Interceptor",
+        "Марсс",
+        "автономний перехоплювач MARSS",
+        "MARSS drone",
+        "MARSS AI interceptor"
+      ],
+      "tags": [
+        "interceptor_uav",
+        "c_uas",
+        "ai_powered",
+        "uk"
+      ]
+    },
+    {
+      "id": "uav_general_anti_recon_fpv",
+      "canonical_name": "Зенітний FPV-дрон (узагальнений клас перехоплювачів розвідників)",
+      "category": "interceptor_uav",
+      "sub_category": "FPV-квадрокоптери та крила перехоплення БпЛА типу Zala, Orlan-10, Supercam, Lancet",
+      "origin": "Україна (узагальнена категорія)",
+      "range_class": "fpv_interceptor",
+      "max_range_km": 30,
+      "max_altitude_km": 5,
+      "names": {
+        "uk": "Зенітний FPV / дрон-перехоплювач",
+        "en": "Anti-Recon / Anti-UAV FPV Interceptor Drone",
+        "nato": "N/A",
+        "grau": "N/A"
+      },
+      "variations": [
+        "FPV-перехоплювач",
+        "FPV перехоплювач",
+        "зенітний FPV",
+        "зенітний фпв",
+        "зенітний FPV-дрон",
+        "зенітний дрон-перехоплювач",
+        "мисливець за Орланами",
+        "перехоплювач Зали",
+        "anti-recon FPV",
+        "anti-UAV FPV",
+        "зенітний дрон",
+        "перехоплювач БпЛА",
+        "дрони-перехоплювачі",
+        "перехоплення розвідника",
+        "FPV по крилу",
+        "FPV збиває розвідник"
+      ],
+      "tags": [
+        "interceptor_uav",
+        "fpv",
+        "anti_recon",
+        "general_class"
+      ]
+    },
+    {
+      "id": "manpads_9k38_igla",
+      "canonical_name": "9К38 «Ігла» (SA-18 Grouse)",
+      "category": "vshorad_manpads",
+      "sub_category": "Переносний зенітно-ракетний комплекс ближньої дії з інфрачервоною ГСН",
+      "origin": "СРСР / Україна",
+      "range_class": "vshorad_manpads",
+      "max_range_km": 5.2,
+      "max_altitude_km": 3.5,
+      "names": {
+        "uk": "9К38 «Ігла»",
+        "en": "9K38 Igla",
+        "nato": "SA-18 Grouse",
+        "grau": "9К38 (ракета 9М39)"
+      },
+      "variations": [
+        "9К38",
+        "9К38 Ігла",
+        "9К38 «Ігла»",
+        "Ігла",
+        "Игла",
+        "Igla",
+        "9K38",
+        "9K38 Igla",
+        "SA-18",
+        "SA-18 Grouse",
+        "SA18",
+        "Grouse",
+        "ПЗРК Ігла",
+        "ПЗРК «Ігла»",
+        "ПЗРК Игла",
+        "ракета 9М39",
+        "9М39",
+        "Ігли",
+        "з Ігли",
+        "комплекс Ігла"
+      ],
+      "tags": [
+        "manpads",
+        "vshorad",
+        "igla",
+        "sa18",
+        "ir_guided"
+      ]
+    },
+    {
+      "id": "manpads_9k310_igla1",
+      "canonical_name": "9К310 «Ігла-1» (SA-16 Gimlet)",
+      "category": "vshorad_manpads",
+      "sub_category": "Переносний зенітно-ракетний комплекс",
+      "origin": "СРСР / Україна",
+      "range_class": "vshorad_manpads",
+      "max_range_km": 5.0,
+      "max_altitude_km": 3.5,
+      "names": {
+        "uk": "9К310 «Ігла-1»",
+        "en": "9K310 Igla-1",
+        "nato": "SA-16 Gimlet",
+        "grau": "9К310 (ракета 9М313)"
+      },
+      "variations": [
+        "9К310",
+        "9К310 Ігла-1",
+        "9К310 «Ігла-1»",
+        "Ігла-1",
+        "Игла-1",
+        "Igla-1",
+        "9K310",
+        "9K310 Igla-1",
+        "SA-16",
+        "SA-16 Gimlet",
+        "SA16",
+        "Gimlet",
+        "ПЗРК Ігла-1",
+        "ракета 9М313",
+        "9М313"
+      ],
+      "tags": [
+        "manpads",
+        "vshorad",
+        "igla1",
+        "sa16"
+      ]
+    },
+    {
+      "id": "manpads_9k338_iglas",
+      "canonical_name": "9К338 «Ігла-С» (SA-24 Grinch)",
+      "category": "vshorad_manpads",
+      "sub_category": "Модернізований ПЗРК підвищеної ефективності проти крилатих ракет та БпЛА",
+      "origin": "Трофейні зразки та на озброєнні",
+      "range_class": "vshorad_manpads",
+      "max_range_km": 6.0,
+      "max_altitude_km": 3.5,
+      "names": {
+        "uk": "9К338 «Ігла-С»",
+        "en": "9K338 Igla-S",
+        "nato": "SA-24 Grinch",
+        "grau": "9К338 (ракета 9М342)"
+      },
+      "variations": [
+        "9К338",
+        "9К338 Ігла-С",
+        "9К338 «Ігла-С»",
+        "Ігла-С",
+        "Игла-С",
+        "Igla-S",
+        "9K338",
+        "9K338 Igla-S",
+        "SA-24",
+        "SA-24 Grinch",
+        "SA24",
+        "Grinch",
+        "ПЗРК Ігла-С",
+        "ракета 9М342",
+        "9М342"
+      ],
+      "tags": [
+        "manpads",
+        "vshorad",
+        "iglas",
+        "sa24"
+      ]
+    },
+    {
+      "id": "manpads_9k32_strela2m",
+      "canonical_name": "9К32М «Стріла-2М» (SA-7 Grail)",
+      "category": "vshorad_manpads",
+      "sub_category": "ПЗРК першого покоління (на зберіганні / у складі ТрО)",
+      "origin": "СРСР / країни НАТО (передані з запасів Чехії, Німеччини)",
+      "range_class": "vshorad_manpads",
+      "max_range_km": 4.2,
+      "max_altitude_km": 2.3,
+      "names": {
+        "uk": "9К32М «Стріла-2М»",
+        "en": "9K32M Strela-2M",
+        "nato": "SA-7 Grail",
+        "grau": "9К32М (ракета 9М32М)"
+      },
+      "variations": [
+        "9К32",
+        "9К32М",
+        "Стріла-2",
+        "Стріла-2М",
+        "Стрела-2",
+        "Стрела-2М",
+        "Strela-2",
+        "Strela-2M",
+        "SA-7",
+        "SA-7 Grail",
+        "SA7",
+        "Grail",
+        "ПЗРК Стріла-2",
+        "ПЗРК Стріла-2М",
+        "ракета 9М32М"
+      ],
+      "tags": [
+        "manpads",
+        "vshorad",
+        "strela2",
+        "sa7"
+      ]
+    },
+    {
+      "id": "manpads_9k34_strela3",
+      "canonical_name": "9К34 «Стріла-3» (SA-14 Gremlin)",
+      "category": "vshorad_manpads",
+      "sub_category": "ПЗРК другого покоління з охолоджуваною ГСН",
+      "origin": "СРСР / Україна",
+      "range_class": "vshorad_manpads",
+      "max_range_km": 4.5,
+      "max_altitude_km": 3.0,
+      "names": {
+        "uk": "9К34 «Стріла-3»",
+        "en": "9K34 Strela-3",
+        "nato": "SA-14 Gremlin",
+        "grau": "9К34 (ракета 9М36)"
+      },
+      "variations": [
+        "9К34",
+        "Стріла-3",
+        "Стрела-3",
+        "Strela-3",
+        "SA-14",
+        "SA-14 Gremlin",
+        "SA14",
+        "Gremlin",
+        "ПЗРК Стріла-3",
+        "ракета 9М36"
+      ],
+      "tags": [
+        "manpads",
+        "vshorad",
+        "strela3",
+        "sa14"
+      ]
+    },
+    {
+      "id": "manpads_fim92_stinger",
+      "canonical_name": "FIM-92 Stinger",
+      "category": "vshorad_manpads",
+      "sub_category": "Американський ПЗРК із двоспектральною інфрачервоною/ультрафіолетовою ГСН",
+      "origin": "США (Raytheon / General Dynamics)",
+      "range_class": "vshorad_manpads",
+      "max_range_km": 4.8,
+      "max_altitude_km": 3.8,
+      "names": {
+        "uk": "FIM-92 Stinger («Стінгер»)",
+        "en": "FIM-92 Stinger",
+        "nato": "Stinger",
+        "grau": "FIM-92"
+      },
+      "variations": [
+        "Stinger",
+        "FIM-92 Stinger",
+        "FIM-92",
+        "FIM92",
+        "Стінгер",
+        "Стингер",
+        "Стінґер",
+        "ПЗРК Стінгер",
+        "ПЗРК Стингер",
+        "Стінгери",
+        "Стингери",
+        "Stingers",
+        "ракета Стінгер",
+        "FIM-92A",
+        "FIM-92B",
+        "FIM-92C",
+        "FIM-92D",
+        "FIM-92E",
+        "FIM-92K",
+        "FIM-92J",
+        "зі Стінгера",
+        "розрахунок Стінгера"
+      ],
+      "tags": [
+        "manpads",
+        "vshorad",
+        "stinger",
+        "usa",
+        "raytheon",
+        "ir_uv_guided"
+      ]
+    },
+    {
+      "id": "manpads_starstreak_hvm",
+      "canonical_name": "Starstreak HVM",
+      "category": "vshorad_manpads",
+      "sub_category": "Британський високошвидкісний (Mach 3.5+) ПЗРК з лазерним наведенням («лазерна стежка»)",
+      "origin": "Велика Британія (Thales Air Defence)",
+      "range_class": "vshorad_manpads_laser",
+      "max_range_km": 7.0,
+      "max_altitude_km": 5.0,
+      "names": {
+        "uk": "Starstreak HVM («Старстрік»)",
+        "en": "Starstreak High Velocity Missile (HVM)",
+        "nato": "Starstreak",
+        "grau": "N/A"
+      },
+      "variations": [
+        "Starstreak",
+        "Starstreak HVM",
+        "Старстрік",
+        "Старстрик",
+        "Старстрейк",
+        "ПЗРК Starstreak",
+        "ПЗРК Старстрік",
+        "Thales Starstreak",
+        "ракета Starstreak",
+        "вольфрамові дротики",
+        "HVM Starstreak",
+        "Starstreak LML",
+        "Starstreak MANPADS"
+      ],
+      "tags": [
+        "manpads",
+        "vshorad",
+        "starstreak",
+        "uk",
+        "thales",
+        "laser_beam_riding",
+        "high_speed"
+      ]
+    },
+    {
+      "id": "manpads_martlet_lmm",
+      "canonical_name": "Martlet / LMM (Lightweight Multirole Missile)",
+      "category": "vshorad_manpads",
+      "sub_category": "Легка багатоцільова високоточна ракета з лазерним наведенням проти БпЛА та гелікоптерів",
+      "origin": "Велика Британія (Thales Air Defence)",
+      "range_class": "vshorad_manpads_laser",
+      "max_range_km": 8.0,
+      "max_altitude_km": 4.5,
+      "names": {
+        "uk": "Martlet / LMM («Мартлет»)",
+        "en": "Martlet / Lightweight Multirole Missile (LMM)",
+        "nato": "Martlet",
+        "grau": "N/A"
+      },
+      "variations": [
+        "Martlet",
+        "Мартлет",
+        "Мартлєт",
+        "LMM",
+        "Thales LMM",
+        "Lightweight Multirole Missile",
+        "ракета Martlet",
+        "ПЗРК Martlet",
+        "ракета Мартлет",
+        "LMM Martlet",
+        "Thales Martlet"
+      ],
+      "tags": [
+        "manpads",
+        "vshorad",
+        "martlet",
+        "lmm",
+        "uk",
+        "thales",
+        "laser_guided"
+      ]
+    },
+    {
+      "id": "manpads_mistral",
+      "canonical_name": "MBDA Mistral (Mistral 2 / Mistral 3)",
+      "category": "vshorad_manpads",
+      "sub_category": "Французький ПЗРК малої дальності з матричною інфрачервоною ГСН",
+      "origin": "Франція (MBDA)",
+      "range_class": "vshorad_manpads",
+      "max_range_km": 7.5,
+      "max_altitude_km": 3.0,
+      "names": {
+        "uk": "MBDA Mistral («Містраль»)",
+        "en": "MBDA Mistral (Mistral 2 / Mistral 3)",
+        "nato": "Mistral",
+        "grau": "N/A"
+      },
+      "variations": [
+        "Mistral",
+        "Mistral 2",
+        "Mistral 3",
+        "Mistral-2",
+        "Mistral-3",
+        "Містраль",
+        "Мистраль",
+        "ПЗРК Mistral",
+        "ПЗРК Містраль",
+        "MBDA Mistral",
+        "ракета Mistral",
+        "комплекс Містраль"
+      ],
+      "tags": [
+        "manpads",
+        "vshorad",
+        "mistral",
+        "mbda",
+        "france"
+      ]
+    },
+    {
+      "id": "manpads_piorun",
+      "canonical_name": "Piorun (Grom-M / «Перун»)",
+      "category": "vshorad_manpads",
+      "sub_category": "Польський глибоко модернізований ПЗРК із цифровою дворежимною охолоджуваною ГСН",
+      "origin": "Польща (Mesko)",
+      "range_class": "vshorad_manpads",
+      "max_range_km": 6.5,
+      "max_altitude_km": 4.0,
+      "names": {
+        "uk": "Piorun («Перун» / Grom-M)",
+        "en": "Piorun MANPADS (Grom-M)",
+        "nato": "Piorun",
+        "grau": "N/A"
+      },
+      "variations": [
+        "Piorun",
+        "Piorun MANPADS",
+        "Перун",
+        "Пйорун",
+        "Пиорун",
+        "Пйорун ПЗРК",
+        "польський Перун",
+        "Grom-M",
+        "ПЗРК Piorun",
+        "ПЗРК Перун",
+        "Mesko Piorun",
+        "ракета Piorun",
+        "ракета Перун",
+        "зі Перуна",
+        "Piorun-M"
+      ],
+      "tags": [
+        "manpads",
+        "vshorad",
+        "piorun",
+        "poland",
+        "mesko",
+        "ir_guided"
+      ]
+    },
+    {
+      "id": "manpads_grom",
+      "canonical_name": "Grom",
+      "category": "vshorad_manpads",
+      "sub_category": "Польський ПЗРК (попередник Piorun)",
+      "origin": "Польща (Mesko)",
+      "range_class": "vshorad_manpads",
+      "max_range_km": 5.5,
+      "max_altitude_km": 3.5,
+      "names": {
+        "uk": "Grom («Гром»)",
+        "en": "Grom MANPADS",
+        "nato": "Grom",
+        "grau": "N/A"
+      },
+      "variations": [
+        "Grom",
+        "Гром",
+        "Grom MANPADS",
+        "польський Гром",
+        "ПЗРК Grom",
+        "ПЗРК Гром",
+        "Mesko Grom"
+      ],
+      "tags": [
+        "manpads",
+        "vshorad",
+        "grom",
+        "poland"
+      ]
+    },
+    {
+      "id": "manpads_rbs_70",
+      "canonical_name": "Saab RBS 70 / RBS 70 NG",
+      "category": "vshorad_manpads",
+      "sub_category": "Шведський лазерно-керований зенітно-ракетний комплекс малої дальності (на тринозі)",
+      "origin": "Швеція (Saab Bofors Dynamics)",
+      "range_class": "vshorad_laser_shorad",
+      "max_range_km": 9.0,
+      "max_altitude_km": 5.0,
+      "names": {
+        "uk": "Saab RBS 70 / RBS 70 NG («РБС-70»)",
+        "en": "Saab RBS 70 / RBS 70 NG",
+        "nato": "RBS 70",
+        "grau": "N/A"
+      },
+      "variations": [
+        "RBS 70",
+        "RBS-70",
+        "RBS70",
+        "RBS 70 NG",
+        "RBS-70 NG",
+        "РБС-70",
+        "РБС 70",
+        "РБС70",
+        "Saab RBS 70",
+        "ПЗРК RBS-70",
+        "ПЗРК РБС-70",
+        "лазерний ПЗРК RBS 70",
+        "ракета Bolide",
+        "Bolide",
+        "ракета Болід",
+        "шведський RBS-70",
+        "RBS 70 Mk 2"
+      ],
+      "tags": [
+        "manpads",
+        "vshorad",
+        "rbs70",
+        "sweden",
+        "saab",
+        "laser_guided",
+        "bolide"
+      ]
+    },
+    {
+      "id": "manpads_kp_sam_chiron",
+      "canonical_name": "LIG Nex1 KP-SAM Shin-Gung (Chiron)",
+      "category": "vshorad_manpads",
+      "sub_category": "Південнокорейський ПЗРК із дворежимною інфрачервоною ГСН",
+      "origin": "Південна Корея (LIG Nex1 / Agency for Defense Development)",
+      "range_class": "vshorad_manpads",
+      "max_range_km": 7.0,
+      "max_altitude_km": 3.5,
+      "names": {
+        "uk": "KP-SAM Shin-Gung / Chiron («Чірон» / «Шінгун»)",
+        "en": "KP-SAM Shin-Gung (Chiron)",
+        "nato": "Chiron",
+        "grau": "N/A"
+      },
+      "variations": [
+        "Chiron",
+        "KP-SAM",
+        "Shin-Gung",
+        "Shingung",
+        "Shin Gung",
+        "Чірон",
+        "Чайрон",
+        "Шингун",
+        "Сінгун",
+        "Шінґун",
+        "KP-SAM Chiron",
+        "ПЗРК Chiron",
+        "ПЗРК Чірон",
+        "південнокорейський ПЗРК Chiron"
+      ],
+      "tags": [
+        "manpads",
+        "vshorad",
+        "chiron",
+        "south_korea",
+        "lig_nex1"
+      ]
+    },
+    {
+      "id": "manpads_anza_mk2",
+      "canonical_name": "Anza Mk-II",
+      "category": "vshorad_manpads",
+      "sub_category": "Пакистанський ПЗРК",
+      "origin": "Пакистан (KRL)",
+      "range_class": "vshorad_manpads",
+      "max_range_km": 5.0,
+      "max_altitude_km": 4.0,
+      "names": {
+        "uk": "Anza Mk-II («Анза»)",
+        "en": "Anza Mk-II",
+        "nato": "Anza",
+        "grau": "N/A"
+      },
+      "variations": [
+        "Anza",
+        "Anza Mk-II",
+        "Anza Mk2",
+        "Anza-2",
+        "Анза",
+        "Анза Мк-2",
+        "ПЗРК Anza",
+        "Anza MANPADS"
+      ],
+      "tags": [
+        "manpads",
+        "vshorad",
+        "anza",
+        "pakistan"
+      ]
+    },
+    {
+      "id": "manpads_blowpipe_javelin",
+      "canonical_name": "Shorts Blowpipe / Javelin MANPADS",
+      "category": "vshorad_manpads",
+      "sub_category": "Ранні британські ПЗРК радіокомандного наведення",
+      "origin": "Велика Британія (Short Brothers)",
+      "range_class": "vshorad_manpads",
+      "max_range_km": 4.5,
+      "max_altitude_km": 3.0,
+      "names": {
+        "uk": "Blowpipe / Javelin MANPADS",
+        "en": "Shorts Blowpipe / Javelin Air Defence Missile",
+        "nato": "Blowpipe",
+        "grau": "N/A"
+      },
+      "variations": [
+        "Blowpipe",
+        "Блоупайп",
+        "Javelin MANPADS",
+        "Джавелін ПЗРК",
+        "зенітний Джавелін",
+        "Shorts Javelin"
+      ],
+      "tags": [
+        "manpads",
+        "vshorad",
+        "blowpipe",
+        "uk"
+      ]
+    },
+    {
+      "id": "spaag_flakpanzer_gepard",
+      "canonical_name": "Flakpanzer Gepard 1A2",
+      "category": "vshorad_spaag_artillery",
+      "sub_category": "Зенітна самохідна установка зі спареною 35-мм гарматою та пошуковою/трекінговою РЛС",
+      "origin": "Німеччина (Krauss-Maffei Wegmann)",
+      "range_class": "vshorad_spaag",
+      "max_range_km": 4.0,
+      "max_altitude_km": 3.0,
+      "names": {
+        "uk": "Флакпанцер Гепард 1А2",
+        "en": "Flakpanzer Gepard 1A2",
+        "nato": "Gepard",
+        "grau": "Flakpanzer Gepard"
+      },
+      "variations": [
+        "Gepard",
+        "Gepard 1A2",
+        "Gepard-1A2",
+        "Gepard 1 A2",
+        "Flakpanzer Gepard",
+        "Flakpanzer",
+        "FlakPz",
+        "FlakPz Gepard",
+        "Гепард",
+        "Гепард 1А2",
+        "Гепард-1А2",
+        "Флакпанцер Гепард",
+        "Флакпанцер",
+        "гепарди",
+        "гепардів",
+        "гепардом",
+        "гепарді",
+        "зенітний гепард",
+        "ЗСУ Гепард",
+        "німецький Гепард",
+        "Gepards",
+        "Gepard AA",
+        "35-мм Гепард",
+        "35mm Gepard",
+        "Gepard SPAAG"
+      ],
+      "tags": [
+        "spaag",
+        "vshorad",
+        "gepard",
+        "germany",
+        "kmw",
+        "35mm",
+        "anti_shahed"
+      ]
+    },
+    {
+      "id": "spaag_zsu_23_4_shilka",
+      "canonical_name": "ЗСУ-23-4 «Шилка»",
+      "category": "vshorad_spaag_artillery",
+      "sub_category": "Чотириствольна 23-мм зенітна самохідна установка з РЛС РПК-2 «Тобол»",
+      "origin": "СРСР / Україна",
+      "range_class": "vshorad_spaag",
+      "max_range_km": 2.5,
+      "max_altitude_km": 2.0,
+      "names": {
+        "uk": "ЗСУ-23-4 «Шилка»",
+        "en": "ZSU-23-4 Shilka",
+        "nato": "Shilka",
+        "grau": "2А6 / 1РЛ33"
+      },
+      "variations": [
+        "ЗСУ-23-4",
+        "ЗСУ 23-4",
+        "ЗСУ23-4",
+        "ЗСУ-23-4 Шилка",
+        "ЗСУ-23-4 «Шилка»",
+        "Шилка",
+        "Шилки",
+        "ZSU-23-4",
+        "ZSU-23-4 Shilka",
+        "Shilka",
+        "ZSU23-4",
+        "ЗСУ Шилка",
+        "Шилкою",
+        "Шилку",
+        "зенітна установка Шилка",
+        "23-мм Шилка"
+      ],
+      "tags": [
+        "spaag",
+        "vshorad",
+        "shilka",
+        "23mm",
+        "ussr",
+        "ukraine"
+      ]
+    },
+    {
+      "id": "artillery_zu_23_2",
+      "canonical_name": "ЗУ-23-2 (ZUR-23-2, ZU-23-2CP, мобільні платформи)",
+      "category": "vshorad_spaag_artillery",
+      "sub_category": "Спарена 23-мм зенітна артилерійська установка на причепі, станку або пікапі/вантажівці",
+      "origin": "СРСР / Україна / Польща (Тарнув)",
+      "range_class": "vshorad_aa_gun",
+      "max_range_km": 2.5,
+      "max_altitude_km": 2.0,
+      "names": {
+        "uk": "ЗУ-23-2 (в т.ч. ZUR-23-2)",
+        "en": "ZU-23-2 / ZUR-23-2 / ZU-23-2CP",
+        "nato": "ZU-23-2",
+        "grau": "2А13"
+      },
+      "variations": [
+        "ЗУ-23-2",
+        "ЗУ-23",
+        "ЗУ23",
+        "ЗУ23-2",
+        "ZU-23-2",
+        "ZU-23",
+        "ZU23-2",
+        "ZU23",
+        "ZUR-23-2",
+        "ZUR-23-2KG",
+        "ZUR-23-2SP",
+        "ZU-23-2CP",
+        "зушка",
+        "зушки",
+        "зушкою",
+        "зушці",
+        "зенітка ЗУ-23",
+        "спарка 23мм",
+        "23-мм зенітка",
+        "спарена 23-мм",
+        "рогатка",
+        "ЗУ-23 на пікапі",
+        "ЗУ-23 на вантажівці"
+      ],
+      "tags": [
+        "aa_gun",
+        "vshorad",
+        "zu23",
+        "mfg",
+        "23mm",
+        "poland",
+        "ukraine"
+      ]
+    },
+    {
+      "id": "spaag_skynex_35mm",
+      "canonical_name": "Rheinmetall Oerlikon Skynex (35-мм)",
+      "category": "vshorad_spaag_artillery",
+      "sub_category": "Модульний зенітний артилерійський комплекс із револьверною 35-мм гарматою та снарядами AHEAD",
+      "origin": "Німеччина / Швейцарія / Італія (Rheinmetall)",
+      "range_class": "vshorad_advanced_c_uas",
+      "max_range_km": 4.5,
+      "max_altitude_km": 3.5,
+      "names": {
+        "uk": "Rheinmetall Skynex 35mm («Скайнекс»)",
+        "en": "Rheinmetall Oerlikon Skynex 35mm",
+        "nato": "Skynex",
+        "grau": "N/A"
+      },
+      "variations": [
+        "Skynex",
+        "Скайнекс",
+        "Скайнекс 35мм",
+        "Oerlikon Skynex",
+        "Rheinmetall Skynex",
+        "комплекс Skynex",
+        "Skynex 35mm",
+        "Skynex AHEAD",
+        "зенітний комплекс Скайнекс",
+        "Skynex air defence",
+        "Revolver Gun Mk3",
+        "Oerlikon Revolver Gun"
+      ],
+      "tags": [
+        "c_uas",
+        "skynex",
+        "rheinmetall",
+        "35mm",
+        "ahead",
+        "germany",
+        "vshorad"
+      ]
+    },
+    {
+      "id": "spaag_skyranger_30_35",
+      "canonical_name": "Rheinmetall Skyranger 30 / 35",
+      "category": "vshorad_spaag_artillery",
+      "sub_category": "Мобільна зенітна башта на бронешасі (Boxer, Leopard 1) з 30/35-мм гарматою та ракетами",
+      "origin": "Німеччина / Швейцарія (Rheinmetall)",
+      "range_class": "vshorad_spaag",
+      "max_range_km": 4.0,
+      "max_altitude_km": 3.0,
+      "names": {
+        "uk": "Rheinmetall Skyranger 30 / 35 («Скайрейнджер»)",
+        "en": "Rheinmetall Skyranger 30 / Skyranger 35",
+        "nato": "Skyranger",
+        "grau": "N/A"
+      },
+      "variations": [
+        "Skyranger",
+        "Skyranger 30",
+        "Skyranger 35",
+        "Skyranger-30",
+        "Skyranger-35",
+        "Скайрейнджер",
+        "Скайренджер",
+        "Скайрейнджер 30",
+        "Скайрейнджер 35",
+        "Oerlikon Skyranger",
+        "Rheinmetall Skyranger"
+      ],
+      "tags": [
+        "spaag",
+        "skyranger",
+        "rheinmetall",
+        "c_uas",
+        "germany"
+      ]
+    },
+    {
+      "id": "artillery_mr2_viktor",
+      "canonical_name": "Excalibur Army MR-2 Viktor",
+      "category": "vshorad_spaag_artillery",
+      "sub_category": "Мобільний зенітний комплекс на пікапі Toyota Land Cruiser 70 зі спареним 14.5-мм КПВТ та нічною оптикою",
+      "origin": "Чехія (Excalibur Army)",
+      "range_class": "vshorad_mfg",
+      "max_range_km": 2.0,
+      "max_altitude_km": 1.5,
+      "names": {
+        "uk": "MR-2 Viktor («Віктор»)",
+        "en": "Excalibur Army MR-2 Viktor",
+        "nato": "Viktor",
+        "grau": "MR-2"
+      },
+      "variations": [
+        "Viktor",
+        "MR-2 Viktor",
+        "MR-2",
+        "MR2",
+        "Віктор",
+        "комплекс Viktor",
+        "МР-2 Віктор",
+        "пікап Viktor",
+        "чеський Віктор",
+        "Viktor 14.5mm",
+        "Excalibur Army Viktor",
+        "зенітний комплекс Viktor",
+        "МВГ Віктор"
+      ],
+      "tags": [
+        "mfg",
+        "viktor",
+        "czech",
+        "14_5mm",
+        "anti_shahed",
+        "vshorad"
+      ]
+    },
+    {
+      "id": "artillery_eos_slinger",
+      "canonical_name": "Electro Optic Systems (EOS) Slinger",
+      "category": "vshorad_spaag_artillery",
+      "sub_category": "Дистанційно керований антидроновий бойовий модуль з 30-мм гарматою Bushmaster M230LF та радаром",
+      "origin": "Австралія (Electro Optic Systems)",
+      "range_class": "vshorad_c_uas",
+      "max_range_km": 2.5,
+      "max_altitude_km": 2.0,
+      "names": {
+        "uk": "EOS Slinger («Слінгер»)",
+        "en": "EOS Slinger Counter-Drone System",
+        "nato": "Slinger",
+        "grau": "N/A"
+      },
+      "variations": [
+        "Slinger",
+        "Слінгер",
+        "Слингер",
+        "EOS Slinger",
+        "антидроновий комплекс Slinger",
+        "модуль Slinger",
+        "австралійський Slinger",
+        "боємодуль Slinger",
+        "Bushmaster M230LF Slinger",
+        "EOS Слінгер"
+      ],
+      "tags": [
+        "c_uas",
+        "slinger",
+        "australia",
+        "eos",
+        "30mm",
+        "vshorad"
+      ]
+    },
+    {
+      "id": "artillery_terrahawk_paladin",
+      "canonical_name": "MSI-DS Terrahawk Paladin (30-мм)",
+      "category": "vshorad_spaag_artillery",
+      "sub_category": "Автономна платформа ППО C-UAS з 30-мм гарматою Mk44 Bushmaster II та РЛС з АФАР",
+      "origin": "Велика Британія (MSI-Defence Systems)",
+      "range_class": "vshorad_c_uas",
+      "max_range_km": 3.0,
+      "max_altitude_km": 2.5,
+      "names": {
+        "uk": "MSI-DS Terrahawk Paladin («Террахок Паладін»)",
+        "en": "MSI-DS Terrahawk Paladin 30mm",
+        "nato": "Terrahawk Paladin",
+        "grau": "N/A"
+      },
+      "variations": [
+        "Terrahawk Paladin",
+        "Terrahawk",
+        "Террахок Паладін",
+        "Террахок",
+        "Террахаук",
+        "MSI-DS Terrahawk",
+        "Paladin 30mm",
+        "комплекс Terrahawk",
+        "MSI Terrahawk",
+        "Terrahawk Paladin 30mm"
+      ],
+      "tags": [
+        "c_uas",
+        "terrahawk",
+        "paladin",
+        "uk",
+        "30mm",
+        "vshorad"
+      ]
+    },
+    {
+      "id": "artillery_bofors_40mm_l70",
+      "canonical_name": "Bofors 40mm L/70",
+      "category": "vshorad_spaag_artillery",
+      "sub_category": "Автоматична 40-мм зенітна гармата",
+      "origin": "Швеція (Bofors, передані Литвою та іншими партнерами)",
+      "range_class": "vshorad_aa_gun",
+      "max_range_km": 4.5,
+      "max_altitude_km": 4.0,
+      "names": {
+        "uk": "Bofors 40mm L/70 («Бофорс Л/70»)",
+        "en": "Bofors 40 mm L/70 Automatic Anti-Aircraft Gun",
+        "nato": "Bofors L/70",
+        "grau": "N/A"
+      },
+      "variations": [
+        "Bofors L/70",
+        "Bofors 40mm",
+        "Bofors 40",
+        "Bofors",
+        "Бофорс",
+        "Бофорс 40-мм",
+        "Бофорс 40мм",
+        "Бофорс Л-70",
+        "Бофорс Л/70",
+        "L/70",
+        "L70",
+        "гармата Бофорс",
+        "зенітка Бофорс"
+      ],
+      "tags": [
+        "aa_gun",
+        "vshorad",
+        "bofors",
+        "40mm",
+        "sweden",
+        "lithuania"
+      ]
+    },
+    {
+      "id": "artillery_s60_azp57",
+      "canonical_name": "АЗП-57 / С-60 (57-мм)",
+      "category": "vshorad_spaag_artillery",
+      "sub_category": "57-мм зенітна гармата на лафеті або на шасі вантажівок",
+      "origin": "СРСР / модернізовані в Україні та Польщі",
+      "range_class": "vshorad_aa_gun",
+      "max_range_km": 6.0,
+      "max_altitude_km": 5.0,
+      "names": {
+        "uk": "АЗП-57 / С-60 (57-мм)",
+        "en": "AZP-57 / S-60 (57mm Anti-Aircraft Gun)",
+        "nato": "S-60",
+        "grau": "АЗП-57"
+      },
+      "variations": [
+        "С-60",
+        "С60",
+        "S-60",
+        "S60",
+        "АЗП-57",
+        "АЗП57",
+        "AZP-57",
+        "гармата С-60",
+        "57-мм С-60",
+        "зенітна гармата С-60",
+        "57-мм зенітка"
+      ],
+      "tags": [
+        "aa_gun",
+        "vshorad",
+        "s60",
+        "57mm"
+      ]
+    },
+    {
+      "id": "mfg_browning_m2",
+      "canonical_name": "Browning M2 / M2HB (12.7 мм)",
+      "category": "vshorad_spaag_artillery",
+      "sub_category": "Великокаліберний кулемет 12.7×99 мм НАТО на зенітних турелях мобільних вогневих груп (МВГ)",
+      "origin": "США / країни НАТО",
+      "range_class": "vshorad_mfg_mg",
+      "max_range_km": 2.0,
+      "max_altitude_km": 1.2,
+      "names": {
+        "uk": "Browning M2 / M2HB («Браунінг»)",
+        "en": "Browning M2 / M2HB .50 Caliber Machine Gun",
+        "nato": "Browning M2",
+        "grau": "N/A"
+      },
+      "variations": [
+        "Browning M2",
+        "M2 Browning",
+        "M2HB",
+        "M2 HB",
+        "Браунінг",
+        "Браунінг М2",
+        "кулемет Браунінг",
+        "М2 Браунінг",
+        "М2",
+        "12.7 Browning",
+        "M2 12.7",
+        "Browning .50",
+        ".50 cal Browning",
+        "кулемет M2"
+      ],
+      "tags": [
+        "mfg",
+        "machine_gun",
+        "12_7mm",
+        "browning",
+        "anti_shahed",
+        "vshorad"
+      ]
+    },
+    {
+      "id": "mfg_dshk_dshkm",
+      "canonical_name": "ДШК / ДШКМ (12.7 мм)",
+      "category": "vshorad_spaag_artillery",
+      "sub_category": "Станковий великокаліберний кулемет 12.7×108 мм на зенітних станках у складі МВГ",
+      "origin": "СРСР / Україна",
+      "range_class": "vshorad_mfg_mg",
+      "max_range_km": 2.0,
+      "max_altitude_km": 1.5,
+      "names": {
+        "uk": "ДШК / ДШКМ («Дашка»)",
+        "en": "DShK / DShKM 12.7mm Heavy Machine Gun",
+        "nato": "DShK",
+        "grau": "56-П-542"
+      },
+      "variations": [
+        "ДШК",
+        "ДШКМ",
+        "DShK",
+        "DShKM",
+        "Дегтярьов-Шпагін",
+        "дашка",
+        "дашки",
+        "дашкою",
+        "кулемет ДШК",
+        "ДШК на станку",
+        "зенітний ДШК",
+        "12.7 ДШК"
+      ],
+      "tags": [
+        "mfg",
+        "machine_gun",
+        "12_7mm",
+        "dshk",
+        "anti_shahed",
+        "vshorad"
+      ]
+    },
+    {
+      "id": "mfg_nsv_12_7_utes",
+      "canonical_name": "НСВ-12.7 «Утьос»",
+      "category": "vshorad_spaag_artillery",
+      "sub_category": "Великокаліберний кулемет 12.7×108 мм на зенітній установці 6У6",
+      "origin": "СРСР / Україна",
+      "range_class": "vshorad_mfg_mg",
+      "max_range_km": 2.0,
+      "max_altitude_km": 1.5,
+      "names": {
+        "uk": "НСВ-12.7 «Утьос»",
+        "en": "NSV 12.7 Utyos Heavy Machine Gun",
+        "nato": "NSV",
+        "grau": "6П11 / 6У6"
+      },
+      "variations": [
+        "НСВ",
+        "НСВ-12.7",
+        "НСВ 12.7",
+        "Утьос",
+        "Утес",
+        "NSV",
+        "NSV 12.7",
+        "кулемет Утьос",
+        "кулемет НСВ",
+        "зенітний НСВ",
+        "НСВТ"
+      ],
+      "tags": [
+        "mfg",
+        "machine_gun",
+        "12_7mm",
+        "nsv",
+        "utes"
+      ]
+    },
+    {
+      "id": "mfg_kpv_kpvt_14_5",
+      "canonical_name": "КПВ / КПВТ (14.5 мм) / ЗПУ-1, ЗПУ-2, ЗПУ-4",
+      "category": "vshorad_spaag_artillery",
+      "sub_category": "Великокаліберний кулемет 14.5×114 мм та зенітно-кулеметні установки на його базі",
+      "origin": "СРСР / Україна",
+      "range_class": "vshorad_mfg_mg",
+      "max_range_km": 2.0,
+      "max_altitude_km": 1.5,
+      "names": {
+        "uk": "КПВ / КПВТ (14.5 мм) / ЗПУ",
+        "en": "KPV / KPVT 14.5mm Heavy Machine Gun / ZPU",
+        "nato": "KPV",
+        "grau": "56-П-562 / ЗПУ-2"
+      },
+      "variations": [
+        "КПВ",
+        "КПВТ",
+        "KPV",
+        "KPVT",
+        "14.5 мм КПВТ",
+        "14.5 КПВ",
+        "кулемет КПВТ",
+        "кулемет КПВ",
+        "ЗПУ-1",
+        "ЗПУ-2",
+        "ЗПУ-4",
+        "ЗПУ2",
+        "ЗПУ4",
+        "ZPU-1",
+        "ZPU-2",
+        "ZPU-4",
+        "зенітна установка ЗПУ"
+      ],
+      "tags": [
+        "mfg",
+        "machine_gun",
+        "14_5mm",
+        "kpv",
+        "kpvt",
+        "zpu"
+      ]
+    },
+    {
+      "id": "mfg_maxim_m1910_mount",
+      "canonical_name": "Кулемет Максима (М1910/30, зенітні спарки та рами)",
+      "category": "vshorad_spaag_artillery",
+      "sub_category": "Станковий кулемет 7.62×54 мм R з водяним охолодженням у зенітних спарках МВГ",
+      "origin": "Україна (модернізовані зенітні станки з коліматорами / прожекторами)",
+      "range_class": "vshorad_mfg_mg",
+      "max_range_km": 1.5,
+      "max_altitude_km": 1.0,
+      "names": {
+        "uk": "Кулемет Максима (М1910/30, зенітні спарки)",
+        "en": "Maxim M1910/30 Dual Anti-Aircraft Mount",
+        "nato": "Maxim",
+        "grau": "56-Г-421"
+      },
+      "variations": [
+        "Максим",
+        "Кулемет Максим",
+        "кулемет Максима",
+        "Maxim gun",
+        "М1910/30",
+        "М1910",
+        "спарка Максимів",
+        "спарка кулеметів Максим",
+        "зенітний Максим",
+        "рахуба Максимів",
+        "Maxim"
+      ],
+      "tags": [
+        "mfg",
+        "machine_gun",
+        "maxim",
+        "anti_shahed",
+        "vshorad"
+      ]
+    },
+    {
+      "id": "mfg_mg3_mg42",
+      "canonical_name": "Rheinmetall MG3 / MG42",
+      "category": "vshorad_spaag_artillery",
+      "sub_category": "Єдиний кулемет 7.62×51 мм НАТО з високим темпом стрільби (до 1200 постр/хв) на зенітних турелях",
+      "origin": "Німеччина (Rheinmetall)",
+      "range_class": "vshorad_mfg_mg",
+      "max_range_km": 1.2,
+      "max_altitude_km": 0.8,
+      "names": {
+        "uk": "Rheinmetall MG3 («МГ-3»)",
+        "en": "Rheinmetall MG3 7.62mm General Purpose Machine Gun",
+        "nato": "MG3",
+        "grau": "N/A"
+      },
+      "variations": [
+        "MG3",
+        "MG-3",
+        "МГ3",
+        "МГ-3",
+        "MG 3",
+        "Rheinmetall MG3",
+        "кулемет MG3",
+        "кулемет МГ-3",
+        "MG42"
+      ],
+      "tags": [
+        "mfg",
+        "machine_gun",
+        "7_62mm",
+        "mg3",
+        "germany"
+      ]
+    },
+    {
+      "id": "mfg_fn_mag_m240",
+      "canonical_name": "FN MAG / M240",
+      "category": "vshorad_spaag_artillery",
+      "sub_category": "Єдиний кулемет 7.62×51 мм НАТО у складі мобільних розрахунків",
+      "origin": "Бельгія / США (FN Herstal)",
+      "range_class": "vshorad_mfg_mg",
+      "max_range_km": 1.2,
+      "max_altitude_km": 0.8,
+      "names": {
+        "uk": "FN MAG / M240",
+        "en": "FN MAG / M240 Machine Gun",
+        "nato": "FN MAG",
+        "grau": "N/A"
+      },
+      "variations": [
+        "FN MAG",
+        "M240",
+        "ФН МАГ",
+        "М240",
+        "кулемет M240",
+        "FN MAG 7.62"
+      ],
+      "tags": [
+        "mfg",
+        "machine_gun",
+        "fn_mag",
+        "belgium"
+      ]
+    },
+    {
+      "id": "mfg_searchlight_air_defense",
+      "canonical_name": "Зенітний пошуковий прожектор МВГ",
+      "category": "vshorad_spaag_artillery",
+      "sub_category": "Потужні світлодіодні / ксенонові пошукові прожектори з лазерними далекомірами для виявлення Shahed-136 вночі",
+      "origin": "Україна",
+      "range_class": "mfg_optical_searchlight",
+      "max_range_km": 3.0,
+      "max_altitude_km": 2.5,
+      "names": {
+        "uk": "Зенітний прожектор МВГ",
+        "en": "Air Defense Searchlight",
+        "nato": "Searchlight",
+        "grau": "N/A"
+      },
+      "variations": [
+        "зенітний прожектор",
+        "пошуковий прожектор",
+        "прожектор МВГ",
+        "прожектор ППО",
+        "світловий прожектор",
+        "зенітне світло",
+        "прожектор проти шахедів",
+        "потужний прожектор"
+      ],
+      "tags": [
+        "mfg",
+        "searchlight",
+        "anti_shahed",
+        "night_interception"
+      ]
+    },
+    {
+      "id": "c_uas_smart_shooter_smash",
+      "canonical_name": "Smart Shooter SMASH 2000L / 3000",
+      "category": "vshorad_spaag_artillery",
+      "sub_category": "Розумний комп'ютеризований коліматорний приціл протидронової стрільби для штурмових гвинтівок",
+      "origin": "Ізраїль (Smart Shooter)",
+      "range_class": "fire_control_c_uas",
+      "max_range_km": 0.3,
+      "max_altitude_km": 0.2,
+      "names": {
+        "uk": "Smart Shooter SMASH («Смарт Шутер»)",
+        "en": "Smart Shooter SMASH 2000L Fire Control System",
+        "nato": "SMASH",
+        "grau": "N/A"
+      },
+      "variations": [
+        "SMASH",
+        "Smart Shooter",
+        "SMASH 2000",
+        "SMASH 2000L",
+        "SMASH 3000",
+        "Смарт Шутер",
+        "розумний приціл SMASH",
+        "антидроновий приціл SMASH"
+      ],
+      "tags": [
+        "c_uas",
+        "fire_control",
+        "smart_shooter",
+        "israel"
+      ]
+    },
+    {
+      "id": "sam_9k33_osa_akm",
+      "canonical_name": "9К33 «Оса» / «Оса-АКМ» (SA-8 Gecko, Osa-P)",
+      "category": "shorad_sam",
+      "sub_category": "Автономний самохідний всепогодний військовий ЗРК малої дальності",
+      "origin": "СРСР / Україна / Польща (Osa-P)",
+      "range_class": "shorad",
+      "max_range_km": 10.3,
+      "max_altitude_km": 5.0,
+      "names": {
+        "uk": "9К33М3 «Оса-АКМ» (в т.ч. Osa-P)",
+        "en": "9K33 Osa-AKM (SA-8 Gecko)",
+        "nato": "SA-8 Gecko",
+        "grau": "9К33 / 9К33М3 (ракета 9М33М3)"
+      },
+      "variations": [
+        "Оса",
+        "Оса-АК",
+        "Оса-АКМ",
+        "Оса АКМ",
+        "9К33",
+        "9К33М2",
+        "9К33М3",
+        "Osa",
+        "Osa-AKM",
+        "Osa AKM",
+        "9K33",
+        "9K33M3",
+        "SA-8",
+        "SA-8 Gecko",
+        "SA8",
+        "Gecko",
+        "ЗРК Оса",
+        "ЗРК Оса-АКМ",
+        "Оси",
+        "Осою",
+        "Osa-P",
+        "польська Osa-P",
+        "ракета 9М33",
+        "9М33М3"
+      ],
+      "tags": [
+        "sam",
+        "shorad",
+        "osa",
+        "sa8",
+        "radio_command",
+        "ussr",
+        "poland"
+      ]
+    },
+    {
+      "id": "sam_9k35_strela_10",
+      "canonical_name": "9К35 «Стріла-10» (SA-13 Gopher)",
+      "category": "shorad_sam",
+      "sub_category": "Самохідний ЗРК ближньої дії на шасі МТ-ЛБ з оптико-електронним наведенням",
+      "origin": "СРСР / Україна / Чехія",
+      "range_class": "shorad",
+      "max_range_km": 5.0,
+      "max_altitude_km": 3.5,
+      "names": {
+        "uk": "9К35 «Стріла-10» (Стріла-10М)",
+        "en": "9K35 Strela-10 (SA-13 Gopher)",
+        "nato": "SA-13 Gopher",
+        "grau": "9К35 (ракета 9М37 / 9М333)"
+      },
+      "variations": [
+        "Стріла-10",
+        "Стрела-10",
+        "Стріла 10",
+        "Стрела 10",
+        "9К35",
+        "9К35М",
+        "9К35М2",
+        "9К35М3",
+        "10М4",
+        "Strela-10",
+        "Strela 10",
+        "9K35",
+        "9K35M",
+        "SA-13",
+        "SA-13 Gopher",
+        "SA13",
+        "Gopher",
+        "ЗРК Стріла-10",
+        "ракета 9М37",
+        "ракета 9М333",
+        "Стріла-10М"
+      ],
+      "tags": [
+        "sam",
+        "shorad",
+        "strela10",
+        "sa13",
+        "mtlb",
+        "optical_ir"
+      ]
+    },
+    {
+      "id": "spaag_2k22_tunguska",
+      "canonical_name": "2К22 «Тунгуска» / «Тунгуска-М1» (SA-19 Grison)",
+      "category": "shorad_sam",
+      "sub_category": "Зенітний гарматно-ракетний комплекс (ЗПРК) зі спареними 30-мм автоматами 2А38 та 8 ЗУР",
+      "origin": "СРСР / Україна",
+      "range_class": "shorad_spaag_sam",
+      "max_range_km": 10.0,
+      "max_altitude_km": 3.5,
+      "names": {
+        "uk": "2К22М1 «Тунгуска-М1»",
+        "en": "2K22 Tunguska / Tunguska-M1 (SA-19 Grison)",
+        "nato": "SA-19 Grison",
+        "grau": "2К22 / 2С6 (ракета 9М311)"
+      },
+      "variations": [
+        "Тунгуска",
+        "Тунгуска-М",
+        "Тунгуска-М1",
+        "Тунгуска М1",
+        "2К22",
+        "2К22М",
+        "2К22М1",
+        "2S6",
+        "2С6",
+        "2С6М",
+        "Tunguska",
+        "Tunguska-M1",
+        "2K22",
+        "SA-19",
+        "SA-19 Grison",
+        "SA19",
+        "Grison",
+        "ЗПРК Тунгуска",
+        "ракета 9М311",
+        "9М311",
+        "гармата 2А38"
+      ],
+      "tags": [
+        "spaag",
+        "sam",
+        "shorad",
+        "tunguska",
+        "sa19",
+        "gun_missile",
+        "30mm"
+      ]
+    },
+    {
+      "id": "sam_an_twq_1_avenger",
+      "canonical_name": "Boeing AN/TWQ-1 Avenger",
+      "category": "shorad_sam",
+      "sub_category": "Самохідний ЗРК ближньої дії на шасі HMMWV з 8 ракетами FIM-92 Stinger та кулеметом M3P 12.7 мм",
+      "origin": "США (Boeing)",
+      "range_class": "shorad_vshorad",
+      "max_range_km": 5.5,
+      "max_altitude_km": 3.8,
+      "names": {
+        "uk": "AN/TWQ-1 Avenger («Евенджер» / «Авенджер»)",
+        "en": "Boeing AN/TWQ-1 Avenger Air Defense System",
+        "nato": "Avenger",
+        "grau": "AN/TWQ-1"
+      },
+      "variations": [
+        "Avenger",
+        "AN/TWQ-1",
+        "AN/TWQ-1 Avenger",
+        "AN-TWQ-1",
+        "TWQ-1",
+        "Евенджер",
+        "Евенджерс",
+        "Авенджер",
+        "Авенджерс",
+        "ЗРК Avenger",
+        "ЗРК Евенджер",
+        "Хамві Евенджер",
+        "Avenger HMMWV",
+        "Boeing Avenger",
+        "комплекс Avenger",
+        "Евенджери"
+      ],
+      "tags": [
+        "sam",
+        "shorad",
+        "avenger",
+        "stinger",
+        "hmmwv",
+        "usa",
+        "boeing"
+      ]
+    },
+    {
+      "id": "sam_crotale_ng",
+      "canonical_name": "Thales Crotale / Crotale NG",
+      "category": "shorad_sam",
+      "sub_category": "Всепогодний ЗРК малої дальності з ракетами VT1 (швидкість Mach 3.5)",
+      "origin": "Франція (Thales)",
+      "range_class": "shorad",
+      "max_range_km": 11.0,
+      "max_altitude_km": 6.0,
+      "names": {
+        "uk": "Thales Crotale NG («Кроталь»)",
+        "en": "Thales Crotale / Crotale NG",
+        "nato": "Crotale",
+        "grau": "N/A"
+      },
+      "variations": [
+        "Crotale",
+        "Crotale NG",
+        "Crotale-NG",
+        "Кроталь",
+        "Кроталь НГ",
+        "Кроталь-НГ",
+        "ЗРК Crotale",
+        "ЗРК Кроталь",
+        "Thales Crotale",
+        "ракета VT1",
+        "VT-1",
+        "Crotale air defense"
+      ],
+      "tags": [
+        "sam",
+        "shorad",
+        "crotale",
+        "thales",
+        "france",
+        "vt1"
+      ]
+    },
+    {
+      "id": "sam_alvis_stormer_hvm",
+      "canonical_name": "Alvis Stormer HVM",
+      "category": "shorad_sam",
+      "sub_category": "Броньована бойова машина з 8 готовими пусковими ракетами Starstreak / Martlet HVM",
+      "origin": "Велика Британія (Alvis Vickers / BAE Systems / Thales)",
+      "range_class": "shorad",
+      "max_range_km": 7.0,
+      "max_altitude_km": 5.0,
+      "names": {
+        "uk": "Alvis Stormer HVM («Стормер»)",
+        "en": "Alvis Stormer HVM (Starstreak / Martlet)",
+        "nato": "Stormer",
+        "grau": "N/A"
+      },
+      "variations": [
+        "Stormer",
+        "Stormer HVM",
+        "Alvis Stormer",
+        "Стормер",
+        "Стормер ХВМ",
+        "ЗРК Stormer",
+        "ЗРК Стормер",
+        "Stormer Starstreak",
+        "Стормер Старстрік",
+        "Stormer Martlet",
+        "BAE Stormer"
+      ],
+      "tags": [
+        "sam",
+        "shorad",
+        "stormer",
+        "starstreak",
+        "martlet",
+        "uk",
+        "hvm"
+      ]
+    },
+    {
+      "id": "sam_l3harris_vampire",
+      "canonical_name": "L3Harris VAMPIRE (APKWS II)",
+      "category": "shorad_sam",
+      "sub_category": "Модульна палетна ракетна система на базі пікапа з 70-мм високоточними ракетами APKWS II з лазерним наведенням",
+      "origin": "США (L3Harris / BAE Systems)",
+      "range_class": "shorad_c_uas",
+      "max_range_km": 5.0,
+      "max_altitude_km": 3.0,
+      "names": {
+        "uk": "L3Harris VAMPIRE («Вампір» з ракетами APKWS)",
+        "en": "L3Harris VAMPIRE (Vehicle-Agnostic Modular Palletized ISR Rocket Equipment)",
+        "nato": "VAMPIRE",
+        "grau": "VAMPIRE"
+      },
+      "variations": [
+        "VAMPIRE",
+        "Вампір",
+        "Вампир",
+        "L3Harris VAMPIRE",
+        "VAMPIRE APKWS",
+        "APKWS Vampire",
+        "ракетний комплекс Вампір",
+        "пускова Vampire",
+        "APKWS II",
+        "APKWS",
+        "ракети APKWS",
+        "Вампайр",
+        "L3Harris Vampire C-UAS",
+        "комплекс Вампір",
+        "Вампіром",
+        "з Вампіра"
+      ],
+      "tags": [
+        "sam",
+        "c_uas",
+        "vampire",
+        "apkws",
+        "usa",
+        "laser_guided",
+        "l3harris"
+      ]
+    },
+    {
+      "id": "sam_supacat_asraam",
+      "canonical_name": "Supacat ASRAAM (AIM-132)",
+      "category": "shorad_sam",
+      "sub_category": "Імпровізований мобільний високоефективний ЗРК малої дальності на шасі вантажівки Supacat HMT 600 з авіаракетами AIM-132 ASRAAM",
+      "origin": "Велика Британія (MBDA UK / Supacat)",
+      "range_class": "shorad",
+      "max_range_km": 15.0,
+      "max_altitude_km": 10.0,
+      "names": {
+        "uk": "Supacat ASRAAM (наземний пуск AIM-132)",
+        "en": "Supacat HMT ASRAAM SAM",
+        "nato": "ASRAAM SAM",
+        "grau": "N/A"
+      },
+      "variations": [
+        "Supacat ASRAAM",
+        "ASRAAM SAM",
+        "Супакат АСРААМ",
+        "АСРААМ",
+        "ASRAAM",
+        "наземний ASRAAM",
+        "пускова Supacat з ASRAAM",
+        "AIM-132 ASRAAM ground",
+        "AIM-132",
+        "MBDA ASRAAM",
+        "британський ASRAAM",
+        "Supacat HMT ASRAAM"
+      ],
+      "tags": [
+        "sam",
+        "shorad",
+        "asraam",
+        "supacat",
+        "uk",
+        "mbda",
+        "iir_guided"
+      ]
+    },
+    {
+      "id": "sam_2k12_kub_m3",
+      "canonical_name": "2К12 «Куб» / 2К12М3 «Куб-М3» (2К12-2Д «Квадрат»)",
+      "category": "shorad_sam",
+      "sub_category": "Самохідний ЗРК малої/середньої дальності СВ з напівактивним радіолокаційним наведенням",
+      "origin": "СРСР / Чехія / Словаччина (передані як військова допомога)",
+      "range_class": "shorad_borderline_medium",
+      "max_range_km": 24.0,
+      "max_altitude_km": 14.0,
+      "names": {
+        "uk": "2К12 «Куб» / «Куб-М3» («Квадрат»)",
+        "en": "2K12 Kub / 2K12M3 (SA-6 Gainful / Kvadrat)",
+        "nato": "SA-6 Gainful",
+        "grau": "2К12 / 1С91 (ракета 3М9)"
+      },
+      "variations": [
+        "Куб",
+        "ЗРК Куб",
+        "2К12",
+        "2К12М",
+        "2К12М3",
+        "2K12",
+        "2K12 Kub",
+        "Kub",
+        "SA-6",
+        "SA-6 Gainful",
+        "SA6",
+        "Gainful",
+        "Квадрат",
+        "2К12-2Д",
+        "2К12-2Д «Квадрат»",
+        "чеський Куб",
+        "словацький Куб",
+        "ракета 3М9",
+        "3М9М3",
+        "комплекс Куб"
+      ],
+      "tags": [
+        "sam",
+        "shorad",
+        "kub",
+        "sa6",
+        "gainful",
+        "sarh"
+      ]
+    },
+    {
+      "id": "sam_frankensam_buk_rim7",
+      "canonical_name": "FrankenSAM (Бук-М1 + RIM-7 Sea Sparrow)",
+      "category": "shorad_sam",
+      "sub_category": "Гібридний ЗРК малої дальності: інтеграція західних ракет RIM-7 Sea Sparrow у радянські пускові установки 9А310М1 «Бук-М1»",
+      "origin": "Україна / США (спільний проєкт FrankenSAM)",
+      "range_class": "shorad",
+      "max_range_km": 20.0,
+      "max_altitude_km": 12.0,
+      "names": {
+        "uk": "FrankenSAM: Бук-М1 + RIM-7 Sea Sparrow",
+        "en": "FrankenSAM (Buk-M1 TELAR with RIM-7 Sea Sparrow)",
+        "nato": "FrankenSAM Sea Sparrow",
+        "grau": "FrankenSAM Buk"
+      },
+      "variations": [
+        "FrankenSAM",
+        "ФранкенСАМ",
+        "Франкенштейн",
+        "Бук Sea Sparrow",
+        "Buk RIM-7",
+        "RIM-7 Sea Sparrow FrankenSAM",
+        "Франкенсам Бук",
+        "Sea Sparrow Бук",
+        "Сі Сперроу",
+        "Сі Спарроу",
+        "RIM-7",
+        "Sea Sparrow",
+        "FrankenSAM RIM-7"
+      ],
+      "tags": [
+        "sam",
+        "shorad",
+        "frankensam",
+        "buk",
+        "sea_sparrow",
+        "rim7",
+        "usa",
+        "ukraine"
+      ]
+    },
+    {
+      "id": "sam_frankensam_aim9m",
+      "canonical_name": "FrankenSAM (AIM-9M Sidewinder Ground Launcher)",
+      "category": "shorad_sam",
+      "sub_category": "Гібридний наземний ЗРК ближньої/малої дальності з ракетами повітря-повітря AIM-9M Sidewinder з тепловою ГСН",
+      "origin": "Україна / США (FrankenSAM)",
+      "range_class": "shorad_vshorad",
+      "max_range_km": 12.0,
+      "max_altitude_km": 5.0,
+      "names": {
+        "uk": "FrankenSAM: наземна пускова AIM-9M Sidewinder",
+        "en": "FrankenSAM Ground-Launched AIM-9M Sidewinder",
+        "nato": "FrankenSAM Sidewinder",
+        "grau": "N/A"
+      },
+      "variations": [
+        "FrankenSAM AIM-9M",
+        "FrankenSAM Sidewinder",
+        "ФранкенСАМ Сайдвіндер",
+        "ФранкенСАМ Сайдваіндер",
+        "пускова AIM-9M FrankenSAM",
+        "Франкенсам AIM-9",
+        "наземний Sidewinder",
+        "AIM-9M ground launcher",
+        "AIM-9M",
+        "Sidewinder",
+        "Сайдвіндер",
+        "Сайдваіндер"
+      ],
+      "tags": [
+        "sam",
+        "shorad",
+        "frankensam",
+        "aim9m",
+        "sidewinder",
+        "usa",
+        "ukraine"
+      ]
+    },
+    {
+      "id": "sam_skyguard_aspide",
+      "canonical_name": "Skyguard Aspide / Spada",
+      "category": "shorad_sam",
+      "sub_category": "Зенітно-ракетний комплекс малої дальності з ракетами Aspide з напівактивним радіолокаційним наведенням",
+      "origin": "Італія / Іспанія (MBDA / Selenia)",
+      "range_class": "shorad",
+      "max_range_km": 15.0,
+      "max_altitude_km": 6.0,
+      "names": {
+        "uk": "Skyguard Aspide / Spada («Аспід» / «Спада»)",
+        "en": "Skyguard Aspide / Spada Air Defence System",
+        "nato": "Aspide",
+        "grau": "N/A"
+      },
+      "variations": [
+        "Aspide",
+        "Spada",
+        "Skyguard Aspide",
+        "Skyguard",
+        "Аспід",
+        "Аспіде",
+        "Спада",
+        "Скайгард",
+        "ЗРК Aspide",
+        "ЗРК Spada",
+        "ЗРК Аспід",
+        "Aspide 2000",
+        "іспанський Aspide",
+        "італійська Spada"
+      ],
+      "tags": [
+        "sam",
+        "shorad",
+        "aspide",
+        "spada",
+        "italy",
+        "spain",
+        "skyguard"
+      ]
+    },
+    {
+      "id": "sam_iris_t_sls",
+      "canonical_name": "Diehl IRIS-T SLS",
+      "category": "shorad_sam",
+      "sub_category": "Самохідний ЗРК малої дальності на базі всюдихода BvS 10 з ракетами IRIS-T з інфрачервоною ГСН",
+      "origin": "Німеччина / Швеція (Diehl Defence / BAE Systems Hägglunds)",
+      "range_class": "shorad",
+      "max_range_km": 12.0,
+      "max_altitude_km": 8.0,
+      "names": {
+        "uk": "IRIS-T SLS («Іріс-Т СЛС»)",
+        "en": "Diehl Defence IRIS-T SLS (Short-Range Air Defense)",
+        "nato": "IRIS-T SLS",
+        "grau": "N/A"
+      },
+      "variations": [
+        "IRIS-T SLS",
+        "IRIS-T ближньої дії",
+        "SLS",
+        "ІРІС-Т СЛС",
+        "Ірис СЛС",
+        "Іріс СЛС",
+        "BvS 10 IRIS-T",
+        "IRIS-T на BvS10",
+        "ЗРК IRIS-T SLS",
+        "RBS 98",
+        "Diehl IRIS-T SLS",
+        "Іріс-Т малої дальності"
+      ],
+      "tags": [
+        "sam",
+        "shorad",
+        "iris_t_sls",
+        "diehl",
+        "germany",
+        "sweden",
+        "bvs10"
+      ]
+    },
+    {
+      "id": "sam_saab_rbs_90",
+      "canonical_name": "Saab RBS 90",
+      "category": "shorad_sam",
+      "sub_category": "Лазерно-керований ЗРК малої дальності з дистанційно керованою пусковою установкою та тепловізійним прицілом",
+      "origin": "Швеція (Saab Bofors Dynamics)",
+      "range_class": "shorad_laser",
+      "max_range_km": 10.0,
+      "max_altitude_km": 5.0,
+      "names": {
+        "uk": "Saab RBS 90 («РБС-90»)",
+        "en": "Saab RBS 90 Air Defence Missile System",
+        "nato": "RBS 90",
+        "grau": "N/A"
+      },
+      "variations": [
+        "RBS 90",
+        "RBS-90",
+        "RBS90",
+        "РБС-90",
+        "РБС 90",
+        "Saab RBS 90",
+        "ЗРК RBS 90",
+        "ЗРК РБС-90"
+      ],
+      "tags": [
+        "sam",
+        "shorad",
+        "rbs90",
+        "saab",
+        "sweden",
+        "laser_guided"
+      ]
+    },
+    {
+      "id": "sam_roland",
+      "canonical_name": "Euromissile Roland",
+      "category": "shorad_sam",
+      "sub_category": "Французько-німецький всепогодний ЗРК малої дальності на колісному або гусеничному шасі",
+      "origin": "Франція / Німеччина (Euromissile)",
+      "range_class": "shorad",
+      "max_range_km": 8.0,
+      "max_altitude_km": 5.5,
+      "names": {
+        "uk": "Euromissile Roland («Роланд»)",
+        "en": "Euromissile Roland SAM",
+        "nato": "Roland",
+        "grau": "N/A"
+      },
+      "variations": [
+        "Roland",
+        "ЗРК Roland",
+        "Роланд",
+        "ЗРК Роланд",
+        "Euromissile Roland",
+        "Roland 2",
+        "Roland 3"
+      ],
+      "tags": [
+        "sam",
+        "shorad",
+        "roland",
+        "france",
+        "germany"
+      ]
+    }
+  ]
+}
